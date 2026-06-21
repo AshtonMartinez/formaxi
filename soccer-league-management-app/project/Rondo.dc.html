@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0b110d}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-thumb{background:#26342b;border-radius:8px;border:2px solid #0b110d}
+  ::-webkit-scrollbar-track{background:transparent}
+  @keyframes rondoGlow{0%,100%{opacity:.5}50%{opacity:1}}
+</style>
+</helmet>
+
+<div style="display:flex;min-height:100vh;background:#0b110d;color:#eef2ee;font-family:'Hanken Grotesk',system-ui,sans-serif;font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased">
+
+  <!-- SIDEBAR -->
+  <aside style="width:248px;flex:none;background:#0e150f;border-right:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;position:sticky;top:0;height:100vh">
+    <div style="padding:24px 22px 18px;display:flex;align-items:center;gap:11px">
+      <div style="width:38px;height:38px;border-radius:11px;background:linear-gradient(150deg,#34e07f,#1f9a52);position:relative;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(52,224,127,0.3)">
+        <div style="width:18px;height:18px;border:2.4px solid #07140c;border-radius:50%"></div>
+        <div style="position:absolute;width:2.4px;height:18px;background:#07140c"></div>
+      </div>
+      <div>
+        <div style="font-family:'Archivo';font-weight:900;font-size:19px;letter-spacing:-0.5px;line-height:1">RONDO</div>
+        <div style="font-size:10px;letter-spacing:1.5px;color:#5f6d63;font-weight:600;text-transform:uppercase;margin-top:2px">Sunday City League</div>
+      </div>
+    </div>
+
+    <div style="padding:8px 14px;font-size:11px;letter-spacing:1.2px;color:#4f5b52;font-weight:700;text-transform:uppercase;margin-top:6px">Compete</div>
+    <nav style="display:flex;flex-direction:column;gap:2px;padding:0 12px">
+      <button onClick="{{ goDashboard }}" style="all:unset;cursor:pointer;display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;font-weight:600;font-size:14px;position:relative;background:{{ navDash.bg }};color:{{ navDash.color }}">
+        <span style="position:absolute;left:-12px;top:9px;bottom:9px;width:3px;border-radius:3px;background:{{ navDash.bar }}"></span>
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="1" y="1" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="10" y="1" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="1" y="10" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="10" y="10" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.6"/></svg>
+        Standings
+      </button>
+      <button onClick="{{ goBrowse }}" style="all:unset;cursor:pointer;display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;font-weight:600;font-size:14px;position:relative;background:{{ navBrowse.bg }};color:{{ navBrowse.color }}">
+        <span style="position:absolute;left:-12px;top:9px;bottom:9px;width:3px;border-radius:3px;background:{{ navBrowse.bar }}"></span>
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7.2" stroke="currentColor" stroke-width="1.6"/><path d="M1.8 9h14.4M9 1.8c2 2 2 12.4 0 14.4M9 1.8c-2 2-2 12.4 0 14.4" stroke="currentColor" stroke-width="1.6"/></svg>
+        Discover
+      </button>
+      <button onClick="{{ goSchedule }}" style="all:unset;cursor:pointer;display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;font-weight:600;font-size:14px;position:relative;background:{{ navSchedule.bg }};color:{{ navSchedule.color }}">
+        <span style="position:absolute;left:-12px;top:9px;bottom:9px;width:3px;border-radius:3px;background:{{ navSchedule.bar }}"></span>
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="1.6" y="3" width="14.8" height="13.4" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M1.6 7h14.8M6 1.6v3M12 1.6v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        Schedule
+      </button>
+    </nav>
+
+    <div style="padding:16px 14px 8px;font-size:11px;letter-spacing:1.2px;color:#4f5b52;font-weight:700;text-transform:uppercase">Manage</div>
+    <nav style="display:flex;flex-direction:column;gap:2px;padding:0 12px">
+      <button onClick="{{ goTeams }}" style="all:unset;cursor:pointer;display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;font-weight:600;font-size:14px;position:relative;background:{{ navTeams.bg }};color:{{ navTeams.color }}">
+        <span style="position:absolute;left:-12px;top:9px;bottom:9px;width:3px;border-radius:3px;background:{{ navTeams.bar }}"></span>
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="6.4" cy="6" r="3.2" stroke="currentColor" stroke-width="1.6"/><circle cx="12.4" cy="7.4" r="2.6" stroke="currentColor" stroke-width="1.6"/><path d="M1.4 16c.6-3 2.6-4.6 5-4.6s4.4 1.6 5 4.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        My Team
+      </button>
+      <button onClick="{{ goProfile }}" style="all:unset;cursor:pointer;display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;font-weight:600;font-size:14px;position:relative;background:{{ navProfile.bg }};color:{{ navProfile.color }}">
+        <span style="position:absolute;left:-12px;top:9px;bottom:9px;width:3px;border-radius:3px;background:{{ navProfile.bar }}"></span>
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="5.6" r="3.4" stroke="currentColor" stroke-width="1.6"/><path d="M2.6 16.2c.8-3.4 3.2-5.2 6.4-5.2s5.6 1.8 6.4 5.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        Profile
+      </button>
+    </nav>
+
+    <div style="margin-top:auto;padding:16px">
+      <button onClick="{{ goCreate }}" style="all:unset;cursor:pointer;width:100%;box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;border-radius:11px;background:#34e07f;color:#06160c;font-weight:800;font-size:14px;box-shadow:0 6px 18px rgba(52,224,127,0.28)" style-hover="all:unset;cursor:pointer;width:100%;box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;border-radius:11px;background:#46ec8d;color:#06160c;font-weight:800;font-size:14px;box-shadow:0 6px 22px rgba(52,224,127,0.45)">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2.5v11M2.5 8h11" stroke="#06160c" stroke-width="2.2" stroke-linecap="round"/></svg>
+        Create
+      </button>
+      <button onClick="{{ goProfile }}" style="all:unset;cursor:pointer;margin-top:12px;display:flex;align-items:center;gap:10px;padding:8px;border-radius:11px;width:100%;box-sizing:border-box" style-hover="all:unset;cursor:pointer;margin-top:12px;display:flex;align-items:center;gap:10px;padding:8px;border-radius:11px;width:100%;box-sizing:border-box;background:rgba(255,255,255,0.04)">
+        <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);flex:none;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#fff;font-family:'Archivo'">SR</div>
+        <div style="text-align:left;line-height:1.2;overflow:hidden">
+          <div style="font-weight:700;font-size:13px;white-space:nowrap">Sam Rivera</div>
+          <div style="font-size:11px;color:#5f6d63;white-space:nowrap">Captain · Riverside FC</div>
+        </div>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main style="flex:1;min-width:0;display:flex;flex-direction:column">
+
+    <!-- HEADER -->
+    <header style="height:68px;flex:none;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:18px;padding:0 30px;background:rgba(11,17,13,0.85);backdrop-filter:blur(8px);position:sticky;top:0;z-index:5">
+      <div style="font-family:'Archivo';font-weight:800;font-size:20px;letter-spacing:-0.4px">{{ pageTitle }}</div>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:14px">
+        <label style="display:flex;align-items:center;gap:9px;background:#131c15;border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:9px 13px;width:260px">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><circle cx="6.4" cy="6.4" r="4.8" stroke="#5f6d63" stroke-width="1.5"/><path d="M10.2 10.2L14 14" stroke="#5f6d63" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <input placeholder="Search teams, players, leagues" style="all:unset;flex:1;font-size:13px;color:#eef2ee;font-family:'Hanken Grotesk'"/>
+        </label>
+        <button style="all:unset;cursor:pointer;width:40px;height:40px;border-radius:10px;background:#131c15;border:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;justify-content:center;position:relative">
+          <svg width="17" height="17" viewBox="0 0 17 17" fill="none"><path d="M3.5 7a5 5 0 0110 0c0 4 1.5 5 1.5 5H2s1.5-1 1.5-5z" stroke="#aeb9b1" stroke-width="1.5" stroke-linejoin="round"/><path d="M6.8 14.5a1.8 1.8 0 003.4 0" stroke="#aeb9b1" stroke-width="1.5"/></svg>
+          <span style="position:absolute;top:9px;right:10px;width:7px;height:7px;border-radius:50%;background:#ff6a3d;border:1.5px solid #131c15"></span>
+        </button>
+      </div>
+    </header>
+
+    <div style="flex:1;overflow:auto">
+
+      <!-- ===== DASHBOARD / STANDINGS ===== -->
+      <sc-if value="{{ isDashboard }}" hint-placeholder-val="{{ true }}">
+      <div style="padding:28px 30px 44px;max-width:1240px;margin:0 auto">
+
+        <!-- league hero -->
+        <div style="border-radius:20px;overflow:hidden;border:1px solid rgba(255,255,255,0.07);background:linear-gradient(110deg,#10301d 0%,#0f1b13 55%);position:relative">
+          <div style="position:absolute;inset:0;background-image:repeating-linear-gradient(90deg,transparent 0 78px,rgba(255,255,255,0.03) 78px 80px);pointer-events:none"></div>
+          <div style="position:relative;padding:26px 28px;display:flex;align-items:center;gap:24px;flex-wrap:wrap">
+            <div style="width:74px;height:74px;border-radius:18px;background:linear-gradient(150deg,#34e07f,#1f9a52);display:flex;align-items:center;justify-content:center;flex:none;box-shadow:0 8px 24px rgba(52,224,127,0.3)">
+              <div style="width:34px;height:34px;border:3px solid #07140c;border-radius:50%;position:relative;display:flex;align-items:center;justify-content:center"><div style="position:absolute;width:3px;height:34px;background:#07140c"></div></div>
+            </div>
+            <div style="min-width:0">
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                <h1 style="font-family:'Archivo';font-weight:900;font-size:28px;letter-spacing:-0.6px;line-height:1">Sunday City League</h1>
+                <span style="background:rgba(52,224,127,0.14);color:#34e07f;font-weight:700;font-size:12px;padding:4px 10px;border-radius:20px">Division 1</span>
+              </div>
+              <div style="color:#9aa89e;font-size:13.5px;margin-top:7px;display:flex;gap:16px;flex-wrap:wrap">
+                <span>11v11 · Hackney Marshes</span><span style="color:#3a4640">|</span><span>2025/26 Season</span><span style="color:#3a4640">|</span><span>Matchday 13 of 18</span>
+              </div>
+            </div>
+            <div style="margin-left:auto;display:flex;gap:26px;align-items:center">
+              <div style="text-align:center"><div style="font-family:'Archivo';font-weight:800;font-size:26px;color:#34e07f">10</div><div style="font-size:11px;color:#5f6d63;text-transform:uppercase;letter-spacing:0.6px;font-weight:600">Teams</div></div>
+              <div style="text-align:center"><div style="font-family:'Archivo';font-weight:800;font-size:26px">87</div><div style="font-size:11px;color:#5f6d63;text-transform:uppercase;letter-spacing:0.6px;font-weight:600">Played</div></div>
+              <div style="text-align:center"><div style="font-family:'Archivo';font-weight:800;font-size:26px">241</div><div style="font-size:11px;color:#5f6d63;text-transform:uppercase;letter-spacing:0.6px;font-weight:600">Goals</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 340px;gap:22px;margin-top:22px;align-items:start">
+
+          <!-- standings table -->
+          <div style="background:#111a13;border:1px solid rgba(255,255,255,0.07);border-radius:18px;overflow:hidden">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 20px 14px">
+              <h2 style="font-family:'Archivo';font-weight:800;font-size:16px">League Table</h2>
+              <div style="display:flex;gap:6px">
+                <span style="display:flex;align-items:center;gap:6px;font-size:11px;color:#8c9a90"><span style="width:9px;height:9px;border-radius:2px;background:#34e07f"></span>Promotion</span>
+                <span style="display:flex;align-items:center;gap:6px;font-size:11px;color:#8c9a90;margin-left:10px"><span style="width:9px;height:9px;border-radius:2px;background:#e0463d"></span>Relegation</span>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:38px 1fr 34px 34px 34px 34px 46px 110px;gap:0;padding:0 20px 8px;font-size:11px;letter-spacing:0.5px;color:#5f6d63;font-weight:700;text-transform:uppercase">
+              <div>#</div><div>Club</div><div style="text-align:center">P</div><div style="text-align:center">W</div><div style="text-align:center">D</div><div style="text-align:center">L</div><div style="text-align:center">Pts</div><div style="text-align:right">Form</div>
+            </div>
+            <sc-for list="{{ standings }}" as="t" hint-placeholder-count="10">
+              <div style="display:grid;grid-template-columns:38px 1fr 34px 34px 34px 34px 46px 110px;align-items:center;padding:11px 20px;border-top:1px solid rgba(255,255,255,0.045);background:{{ t.rowBg }};position:relative">
+                <div style="display:flex;align-items:center;gap:9px">
+                  <span style="position:absolute;left:0;top:6px;bottom:6px;width:3px;border-radius:3px;background:{{ t.accent }}"></span>
+                  <span style="font-family:'Archivo';font-weight:700;font-size:14px;color:#cfd8d1;width:16px;text-align:center">{{ t.pos }}</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:11px;min-width:0">
+                  <span style="width:28px;height:28px;border-radius:8px;background:{{ t.crestBg }};display:flex;align-items:center;justify-content:center;font-family:'Archivo';font-weight:800;font-size:11px;color:#fff;flex:none">{{ t.initials }}</span>
+                  <span style="font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.name }}</span>
+                </div>
+                <div style="text-align:center;font-size:13.5px;color:#9aa89e">{{ t.p }}</div>
+                <div style="text-align:center;font-size:13.5px;color:#9aa89e">{{ t.w }}</div>
+                <div style="text-align:center;font-size:13.5px;color:#9aa89e">{{ t.d }}</div>
+                <div style="text-align:center;font-size:13.5px;color:#9aa89e">{{ t.l }}</div>
+                <div style="text-align:center;font-family:'Archivo';font-weight:800;font-size:15px;color:#eef2ee">{{ t.pts }}</div>
+                <div style="display:flex;gap:4px;justify-content:flex-end">
+                  <sc-for list="{{ t.form }}" as="fd" hint-placeholder-count="5">
+                    <span style="width:18px;height:18px;border-radius:5px;background:{{ fd.bg }};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#07140c;font-family:'Archivo'">{{ fd.ch }}</span>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+
+          <!-- right rail -->
+          <div style="display:flex;flex-direction:column;gap:22px">
+            <div style="background:#111a13;border:1px solid rgba(255,255,255,0.07);border-radius:18px;padding:18px 20px">
+              <h2 style="font-family:'Archivo';font-weight:800;font-size:15px;margin-bottom:14px">Top Scorers</h2>
+              <sc-for list="{{ scorers }}" as="s" hint-placeholder-count="5">
+                <div style="display:flex;align-items:center;gap:12px;padding:9px 0;border-top:1px solid rgba(255,255,255,0.05)">
+                  <span style="font-family:'Archivo';font-weight:800;font-size:14px;color:{{ s.rankColor }};width:18px">{{ s.rank }}</span>
+                  <span style="width:30px;height:30px;border-radius:50%;background:{{ s.crestBg }};flex:none"></span>
+                  <div style="min-width:0;flex:1"><div style="font-weight:700;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ s.name }}</div><div style="font-size:11.5px;color:#5f6d63;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ s.team }}</div></div>
+                  <span style="font-family:'Archivo';font-weight:800;font-size:18px;color:#34e07f">{{ s.goals }}</span>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="background:#111a13;border:1px solid rgba(255,255,255,0.07);border-radius:18px;padding:18px 20px">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><h2 style="font-family:'Archivo';font-weight:800;font-size:15px">Next Fixtures</h2><span style="font-size:11px;color:#5f6d63;font-weight:600">MD 14</span></div>
+              <sc-for list="{{ fixtures }}" as="fx" hint-placeholder-count="3">
+                <div style="padding:10px 0;border-top:1px solid rgba(255,255,255,0.05)">
+                  <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600">
+                    <span style="width:18px;height:18px;border-radius:5px;background:{{ fx.homeBg }};flex:none"></span>{{ fx.home }}
+                    <span style="color:#5f6d63;font-weight:700;margin:0 2px">v</span>
+                    <span style="width:18px;height:18px;border-radius:5px;background:{{ fx.awayBg }};flex:none"></span>{{ fx.away }}
+                  </div>
+                  <div style="font-size:11.5px;color:#5f6d63;margin-top:4px;margin-left:0">{{ fx.when }} · {{ fx.venue }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ===== DISCOVER ===== -->
+      <sc-if value="{{ isBrowse }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:28px 30px 44px;max-width:1240px;margin:0 auto">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px">
+          <div>
+            <h1 style="font-family:'Archivo';font-weight:900;font-size:26px;letter-spacing:-0.5px">Find your next league</h1>
+            <p style="color:#8c9a90;font-size:14px;margin-top:6px">42 leagues and pickup groups near Hackney, London</p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <div style="display:flex;align-items:center;gap:7px;background:#131c15;border:1px solid rgba(255,255,255,0.07);border-radius:9px;padding:9px 13px;font-size:13px;color:#cfd8d1;font-weight:600">📍 Hackney <span style="color:#5f6d63">▾</span></div>
+            <div style="display:flex;align-items:center;gap:7px;background:#131c15;border:1px solid rgba(255,255,255,0.07);border-radius:9px;padding:9px 13px;font-size:13px;color:#cfd8d1;font-weight:600">Any format <span style="color:#5f6d63">▾</span></div>
+            <div style="display:flex;align-items:center;gap:7px;background:#131c15;border:1px solid rgba(255,255,255,0.07);border-radius:9px;padding:9px 13px;font-size:13px;color:#cfd8d1;font-weight:600">Any day <span style="color:#5f6d63">▾</span></div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap">
+          <span style="padding:8px 15px;border-radius:20px;background:#34e07f;color:#06160c;font-weight:700;font-size:13px">All</span>
+          <span style="padding:8px 15px;border-radius:20px;background:#131c15;border:1px solid rgba(255,255,255,0.07);color:#cfd8d1;font-weight:600;font-size:13px">11-a-side</span>
+          <span style="padding:8px 15px;border-radius:20px;background:#131c15;border:1px solid rgba(255,255,255,0.07);color:#cfd8d1;font-weight:600;font-size:13px">7-a-side</span>
+          <span style="padding:8px 15px;border-radius:20px;background:#131c15;border:1px solid rgba(255,255,255,0.07);color:#cfd8d1;font-weight:600;font-size:13px">5-a-side</span>
+          <span style="padding:8px 15px;border-radius:20px;background:#131c15;border:1px solid rgba(255,255,255,0.07);color:#cfd8d1;font-weight:600;font-size:13px">Pickup</span>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:18px">
+          <sc-for list="{{ leagues }}" as="lg" hint-placeholder-count="6">
+            <div style="background:#111a13;border:1px solid rgba(255,255,255,0.07);border-radius:16px;overflow:hidden" style-hover="background:#141f17;border:1px solid rgba(52,224,127,0.3);border-radius:16px;overflow:hidden">
+              <div style="height:84px;background:{{ lg.banner }};position:relative;display:flex;align-items:flex-end;padding:12px 16px">
+                <div style="position:absolute;inset:0;background-image:repeating-linear-gradient(90deg,transparent 0 38px,rgba(255,255,255,0.06) 38px 40px)"></div>
+                <span style="position:relative;background:{{ lg.tagBg }};color:{{ lg.tagColor }};font-weight:700;font-size:11px;padding:4px 10px;border-radius:20px">{{ lg.spots }}</span>
+              </div>
+              <div style="padding:16px 18px">
+                <div style="display:flex;align-items:center;gap:11px">
+                  <span style="width:40px;height:40px;border-radius:11px;background:{{ lg.crestBg }};display:flex;align-items:center;justify-content:center;font-family:'Archivo';font-weight:800;font-size:14px;color:#fff;flex:none;margin-top:-34px;border:3px solid #111a13">{{ lg.initials }}</span>
+                </div>
+                <h3 style="font-family:'Archivo';font-weight:800;font-size:17px;margin-top:8px">{{ lg.name }}</h3>
+                <div style="color:#8c9a90;font-size:13px;margin-top:4px">{{ lg.format }} · {{ lg.location }}</div>
+                <div style="display:flex;gap:14px;margin-top:14px;padding-top:13px;border-top:1px solid rgba(255,255,255,0.06)">
+                  <div><div style="font-size:11px;color:#5f6d63;font-weight:600">When</div><div style="font-weight:700;font-size:13px;margin-top:2px">{{ lg.day }}</div></div>
+                  <div><div style="font-size:11px;color:#5f6d63;font-weight:600">Cost</div><div style="font-weight:700;font-size:13px;margin-top:2px">{{ lg.fee }}</div></div>
+                  <button style="all:unset;cursor:pointer;margin-left:auto;align-self:center;background:rgba(52,224,127,0.12);color:#34e07f;font-weight:700;font-size:13px;padding:8px 16px;border-radius:9px" style-hover="all:unset;cursor:pointer;margin-left:auto;align-self:center;background:#34e07f;color:#06160c;font-weight:700;font-size:13px;padding:8px 16px;border-radius:9px">Join</button>
+                </div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ===== SCHEDULE ===== -->
+      <sc-if value="{{ isSchedule }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:28px 30px 44px;max-width:1240px;margin:0 auto">
+        <div style="display:grid;grid-template-columns:1fr 360px;gap:22px;align-items:start">
+          <div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+              <h1 style="font-family:'Archivo';font-weight:900;font-size:24px;letter-spacing:-0.5px">Match Schedule</h1>
+              <div style="display:flex;gap:6px;background:#131c15;border:1px solid rgba(255,255,255,0.07);border-radius:9px;padding:3px">
+                <span style="padding:7px 14px;border-radius:7px;background:#34e07f;color:#06160c;font-weight:700;font-size:12.5px">List</span>
+                <span style="padding:7px 14px;border-radius:7px;color:#8c9a90;font-weight:600;font-size:12.5px">Calendar</span>
+              </div>
+            </div>
+            <sc-for list="{{ schedule }}" as="m" hint-placeholder-count="5">
+              <div style="background:#111a13;border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:14px 18px;margin-bottom:12px;display:flex;align-items:center;gap:18px" style-hover="background:#141f17;border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:14px 18px;margin-bottom:12px;display:flex;align-items:center;gap:18px">
+                <div style="text-align:center;width:50px;flex:none">
+                  <div style="font-size:11px;color:#34e07f;font-weight:700;text-transform:uppercase">{{ m.mon }}</div>
+                  <div style="font-family:'Archivo';font-weight:900;font-size:24px;line-height:1">{{ m.day }}</div>
+                  <div style="font-size:11px;color:#5f6d63">{{ m.time }}</div>
+                </div>
+                <div style="width:1px;align-self:stretch;background:rgba(255,255,255,0.07)"></div>
+                <div style="flex:1;min-width:0">
+                  <div style="display:flex;align-items:center;gap:9px;font-weight:700;font-size:15px">
+                    <span style="width:22px;height:22px;border-radius:6px;background:#1f9a52;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;font-family:'Archivo';color:#fff">RF</span>
+                    Riverside FC
+                    <span style="color:#5f6d63;font-weight:700">vs</span>
+                    <span style="width:22px;height:22px;border-radius:6px;background:{{ m.oppBg }};display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;font-family:'Archivo';color:#fff">{{ m.oppShort }}</span>
+                    {{ m.opp }}
+                  </div>
+                  <div style="font-size:12.5px;color:#8c9a90;margin-top:5px">{{ m.haTag }} · {{ m.venue }}</div>
+                </div>
+                <span style="background:{{ m.statusBg }};color:{{ m.statusColor }};font-weight:700;font-size:12px;padding:6px 13px;border-radius:8px;flex:none">{{ m.status }}</span>
+              </div>
+            </sc-for>
+          </div>
+
+          <!-- next match detail -->
+          <div style="background:linear-gradient(160deg,#13261a,#0f1b13);border:1px solid rgba(52,224,127,0.18);border-radius:18px;padding:22px;position:sticky;top:88px">
+            <div style="font-size:11px;letter-spacing:1px;color:#34e07f;font-weight:700;text-transform:uppercase">Next Match</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin:18px 0 6px">
+              <div style="text-align:center;flex:1"><div style="width:52px;height:52px;border-radius:14px;background:#1f9a52;margin:0 auto;display:flex;align-items:center;justify-content:center;font-family:'Archivo';font-weight:800;font-size:16px;color:#fff">RF</div><div style="font-weight:700;font-size:13px;margin-top:8px">Riverside</div></div>
+              <div style="font-family:'Archivo';font-weight:900;font-size:18px;color:#5f6d63">VS</div>
+              <div style="text-align:center;flex:1"><div style="width:52px;height:52px;border-radius:14px;background:#8b5cf6;margin:0 auto;display:flex;align-items:center;justify-content:center;font-family:'Archivo';font-weight:800;font-size:16px;color:#fff">MU</div><div style="font-weight:700;font-size:13px;margin-top:8px">Marsh Utd</div></div>
+            </div>
+            <div style="text-align:center;color:#9aa89e;font-size:13px;margin:14px 0 18px;padding:10px;background:rgba(0,0,0,0.2);border-radius:10px">Sat 22 Jun · 10:00<br><span style="color:#5f6d63;font-size:12px">Hackney Marshes · Pitch 3</span></div>
+            <div style="font-size:12px;color:#8c9a90;font-weight:700;margin-bottom:9px;display:flex;justify-content:space-between">Squad availability <span style="color:#34e07f">11 confirmed</span></div>
+            <div style="display:flex;height:8px;border-radius:5px;overflow:hidden;margin-bottom:8px"><div style="flex:11;background:#34e07f"></div><div style="flex:2;background:#e0463d"></div><div style="flex:3;background:#33433a"></div></div>
+            <div style="display:flex;gap:14px;font-size:11.5px;color:#8c9a90"><span>● 11 In</span><span style="color:#e0463d">● 2 Out</span><span>● 3 Pending</span></div>
+            <div style="display:flex;gap:8px;margin-top:18px">
+              <button style="all:unset;cursor:pointer;flex:1;text-align:center;background:#34e07f;color:#06160c;font-weight:800;font-size:13.5px;padding:11px;border-radius:10px">I'm in ✓</button>
+              <button style="all:unset;cursor:pointer;text-align:center;background:rgba(255,255,255,0.06);color:#cfd8d1;font-weight:700;font-size:13.5px;padding:11px 16px;border-radius:10px">Can't play</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ===== MY TEAM ===== -->
+      <sc-if value="{{ isTeams }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:28px 30px 44px;max-width:1240px;margin:0 auto">
+        <div style="background:linear-gradient(110deg,#161f2e,#0f1b13);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:24px 26px;display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+          <div style="width:68px;height:68px;border-radius:16px;background:#1f9a52;display:flex;align-items:center;justify-content:center;font-family:'Archivo';font-weight:900;font-size:22px;color:#fff;flex:none">RF</div>
+          <div>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><h1 style="font-family:'Archivo';font-weight:900;font-size:26px;letter-spacing:-0.5px">Riverside FC</h1><span style="background:rgba(255,106,61,0.16);color:#ff8a5f;font-weight:700;font-size:11px;padding:4px 10px;border-radius:20px">You captain this team</span></div>
+            <div style="color:#9aa89e;font-size:13.5px;margin-top:6px">Sunday City League · Div 1 · Founded 2021</div>
+          </div>
+          <div style="margin-left:auto;display:flex;gap:24px">
+            <div style="text-align:center"><div style="font-family:'Archivo';font-weight:800;font-size:24px;color:#34e07f">1st</div><div style="font-size:11px;color:#5f6d63;font-weight:600">Position</div></div>
+            <div style="text-align:center"><div style="font-family:'Archivo';font-weight:800;font-size:24px">10-2-1</div><div style="font-size:11px;color:#5f6d63;font-weight:600">W-D-L</div></div>
+            <div style="text-align:center"><div style="font-family:'Archivo';font-weight:800;font-size:24px">18</div><div style="font-size:11px;color:#5f6d63;font-weight:600">Squad</div></div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:6px;margin:20px 0;border-bottom:1px solid rgba(255,255,255,0.07)">
+          <span style="padding:11px 4px;margin-right:18px;font-weight:700;font-size:14px;color:#34e07f;border-bottom:2px solid #34e07f">Squad</span>
+          <span style="padding:11px 4px;margin-right:18px;font-weight:600;font-size:14px;color:#8c9a90">Fixtures</span>
+          <span style="padding:11px 4px;margin-right:18px;font-weight:600;font-size:14px;color:#8c9a90">Stats</span>
+          <span style="padding:11px 4px;font-weight:600;font-size:14px;color:#8c9a90">Settings</span>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 300px;gap:22px;align-items:start">
+          <div style="background:#111a13;border:1px solid rgba(255,255,255,0.07);border-radius:16px;overflow:hidden">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px">
+              <h2 style="font-family:'Archivo';font-weight:800;font-size:16px">Squad Roster</h2>
+              <button style="all:unset;cursor:pointer;display:flex;align-items:center;gap:7px;background:rgba(52,224,127,0.12);color:#34e07f;font-weight:700;font-size:13px;padding:8px 14px;border-radius:9px"><span style="font-size:15px;line-height:0">+</span> Invite player</button>
+            </div>
+            <div style="display:grid;grid-template-columns:46px 1fr 70px 50px 50px 90px;gap:0;padding:0 20px 8px;font-size:11px;letter-spacing:0.5px;color:#5f6d63;font-weight:700;text-transform:uppercase"><div>#</div><div>Player</div><div>Pos</div><div style="text-align:center">App</div><div style="text-align:center">G/A</div><div style="text-align:right">Status</div></div>
+            <sc-for list="{{ squad }}" as="p" hint-placeholder-count="9">
+              <div style="display:grid;grid-template-columns:46px 1fr 70px 50px 50px 90px;align-items:center;padding:11px 20px;border-top:1px solid rgba(255,255,255,0.045)">
+                <div style="font-family:'Archivo';font-weight:800;font-size:16px;color:#cfd8d1">{{ p.num }}</div>
+                <div style="display:flex;align-items:center;gap:11px;min-width:0">
+                  <span style="width:32px;height:32px;border-radius:50%;background:{{ p.avatarBg }};flex:none"></span>
+                  <div style="min-width:0"><div style="font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.name }}{{ p.capMark }}</div></div>
+                </div>
+                <div style="font-size:12.5px;color:#8c9a90;font-weight:600">{{ p.pos }}</div>
+                <div style="text-align:center;font-size:13.5px;color:#9aa89e">{{ p.apps }}</div>
+                <div style="text-align:center;font-size:13.5px;color:#9aa89e">{{ p.ga }}</div>
+                <div style="text-align:right"><span style="background:{{ p.availBg }};color:{{ p.availColor }};font-weight:700;font-size:11px;padding:4px 9px;border-radius:7px">{{ p.avail }}</span></div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:18px">
+            <div style="background:#111a13;border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:18px 20px">
+              <h2 style="font-family:'Archivo';font-weight:800;font-size:15px;margin-bottom:14px">Season Form</h2>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+                <div><div style="font-family:'Archivo';font-weight:800;font-size:22px">34</div><div style="font-size:11.5px;color:#5f6d63">Goals for</div></div>
+                <div><div style="font-family:'Archivo';font-weight:800;font-size:22px">11</div><div style="font-size:11.5px;color:#5f6d63">Goals against</div></div>
+                <div><div style="font-family:'Archivo';font-weight:800;font-size:22px;color:#34e07f">+23</div><div style="font-size:11.5px;color:#5f6d63">Goal diff</div></div>
+                <div><div style="font-family:'Archivo';font-weight:800;font-size:22px">77%</div><div style="font-size:11.5px;color:#5f6d63">Win rate</div></div>
+              </div>
+            </div>
+            <div style="background:#111a13;border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:18px 20px">
+              <h2 style="font-family:'Archivo';font-weight:800;font-size:15px;margin-bottom:12px">Recent results</h2>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;align-items:center;justify-content:space-between;font-size:13px"><span>vs Bow Rangers</span><span style="font-family:'Archivo';font-weight:800;background:rgba(52,224,127,0.14);color:#34e07f;padding:3px 8px;border-radius:6px">3-1 W</span></div>
+                <div style="display:flex;align-items:center;justify-content:space-between;font-size:13px"><span>vs Clapton CFC</span><span style="font-family:'Archivo';font-weight:800;background:rgba(52,224,127,0.14);color:#34e07f;padding:3px 8px;border-radius:6px">2-0 W</span></div>
+                <div style="display:flex;align-items:center;justify-content:space-between;font-size:13px"><span>vs Victoria Park</span><span style="font-family:'Archivo';font-weight:800;background:rgba(217,169,37,0.16);color:#d9a925;padding:3px 8px;border-radius:6px">1-1 D</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ===== PROFILE ===== -->
+      <sc-if value="{{ isProfile }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:28px 30px 44px;max-width:1100px;margin:0 auto">
+        <div style="border-radius:20px;overflow:hidden;border:1px solid rgba(255,255,255,0.08)">
+          <div style="height:120px;background:linear-gradient(110deg,#10301d,#13202e);position:relative"><div style="position:absolute;inset:0;background-image:repeating-linear-gradient(90deg,transparent 0 58px,rgba(255,255,255,0.04) 58px 60px)"></div></div>
+          <div style="padding:0 28px 24px;background:#111a13;display:flex;align-items:flex-end;gap:20px;flex-wrap:wrap">
+            <div style="width:96px;height:96px;border-radius:24px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);margin-top:-40px;border:4px solid #111a13;display:flex;align-items:center;justify-content:center;font-family:'Archivo';font-weight:900;font-size:30px;color:#fff;flex:none">SR</div>
+            <div style="padding-bottom:4px">
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><h1 style="font-family:'Archivo';font-weight:900;font-size:27px;letter-spacing:-0.5px">Sam Rivera</h1><span style="background:rgba(52,224,127,0.14);color:#34e07f;font-weight:700;font-size:12px;padding:4px 11px;border-radius:20px">#10 · Midfielder</span></div>
+              <div style="color:#9aa89e;font-size:13.5px;margin-top:6px">Riverside FC · Tuesday 5s · London</div>
+            </div>
+            <button style="all:unset;cursor:pointer;margin-left:auto;margin-bottom:6px;background:rgba(255,255,255,0.06);color:#cfd8d1;font-weight:700;font-size:13px;padding:10px 18px;border-radius:10px">Edit profile</button>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:20px">
+          <div style="background:#111a13;border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:18px"><div style="font-family:'Archivo';font-weight:900;font-size:28px">47</div><div style="font-size:12px;color:#5f6d63;margin-top:3px">Matches</div></div>
+          <div style="background:#111a13;border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:18px"><div style="font-family:'Archivo';font-weight:900;font-size:28px;color:#34e07f">18</div><div style="font-size:12px;color:#5f6d63;margin-top:3px">Goals</div></div>
+          <div style="background:#111a13;border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:18px"><div style="font-family:'Archivo';font-weight:900;font-size:28px;color:#34e07f">23</div><div style="font-size:12px;color:#5f6d63;margin-top:3px">Assists</div></div>
+          <div style="background:#111a13;border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:18px"><div style="font-family:'Archivo';font-weight:900;font-size:28px;color:#ff8a5f">6</div><div style="font-size:12px;color:#5f6d63;margin-top:3px">MOTM</div></div>
+          <div style="background:#111a13;border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:18px"><div style="font-family:'Archivo';font-weight:900;font-size:28px">64%</div><div style="font-size:12px;color:#5f6d63;margin-top:3px">Win rate</div></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px;align-items:start">
+          <div style="background:#111a13;border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:20px 22px">
+            <h2 style="font-family:'Archivo';font-weight:800;font-size:16px;margin-bottom:16px">Account</h2>
+            <div style="display:flex;flex-direction:column;gap:2px">
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.05)"><span style="color:#8c9a90;font-size:13px">Full name</span><span style="font-weight:600;font-size:13.5px">Samuel Rivera</span></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.05)"><span style="color:#8c9a90;font-size:13px">Email</span><span style="font-weight:600;font-size:13.5px">sam.rivera@email.com</span></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.05)"><span style="color:#8c9a90;font-size:13px">Preferred position</span><span style="font-weight:600;font-size:13.5px">Central Midfield</span></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0"><span style="color:#8c9a90;font-size:13px">Match reminders</span><span style="display:inline-flex;width:38px;height:22px;background:#34e07f;border-radius:20px;padding:2px;justify-content:flex-end"><span style="width:18px;height:18px;background:#06160c;border-radius:50%"></span></span></div>
+            </div>
+          </div>
+          <div style="background:#111a13;border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:20px 22px">
+            <h2 style="font-family:'Archivo';font-weight:800;font-size:16px;margin-bottom:16px">My Teams</h2>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;align-items:center;gap:13px;padding:12px;background:#161f18;border-radius:12px"><span style="width:42px;height:42px;border-radius:11px;background:#1f9a52;display:flex;align-items:center;justify-content:center;font-family:'Archivo';font-weight:800;font-size:14px;color:#fff">RF</span><div style="flex:1"><div style="font-weight:700;font-size:14px">Riverside FC</div><div style="font-size:12px;color:#5f6d63">Captain · 11v11 League</div></div><span style="background:rgba(255,106,61,0.16);color:#ff8a5f;font-weight:700;font-size:11px;padding:4px 9px;border-radius:7px">Captain</span></div>
+              <div style="display:flex;align-items:center;gap:13px;padding:12px;background:#161f18;border-radius:12px"><span style="width:42px;height:42px;border-radius:11px;background:#06b6d4;display:flex;align-items:center;justify-content:center;font-family:'Archivo';font-weight:800;font-size:14px;color:#fff">T5</span><div style="flex:1"><div style="font-weight:700;font-size:14px">Tuesday 5s</div><div style="font-size:12px;color:#5f6d63">Player · 5v5 Pickup</div></div></div>
+              <button style="all:unset;cursor:pointer;text-align:center;padding:11px;border:1.5px dashed rgba(255,255,255,0.12);border-radius:12px;color:#8c9a90;font-weight:600;font-size:13px">+ Join or create a team</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ===== CREATE ===== -->
+      <sc-if value="{{ isCreate }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:28px 30px 56px;max-width:1040px;margin:0 auto">
+        <h1 style="font-family:'Archivo';font-weight:900;font-size:26px;letter-spacing:-0.5px">Create</h1>
+        <p style="color:#8c9a90;font-size:14px;margin-top:6px">Set up a new competition or register your team — we'll walk you through it.</p>
+
+        <div style="display:flex;gap:10px;margin:22px 0 26px">
+          <button onClick="{{ tabLeague }}" style="all:unset;cursor:pointer;flex:1;display:flex;align-items:center;gap:13px;padding:16px 18px;border-radius:14px;background:{{ ctLeague.bg }};border:1.5px solid {{ ctLeague.bd }};color:{{ ctLeague.color }}">
+            <span style="width:38px;height:38px;border-radius:11px;background:rgba(52,224,127,0.14);display:flex;align-items:center;justify-content:center;flex:none">🏆</span>
+            <span style="text-align:left"><span style="display:block;font-weight:700;font-size:15px">New League</span><span style="display:block;font-size:12px;color:#5f6d63;margin-top:2px">Run a competition</span></span>
+          </button>
+          <button onClick="{{ tabTeam }}" style="all:unset;cursor:pointer;flex:1;display:flex;align-items:center;gap:13px;padding:16px 18px;border-radius:14px;background:{{ ctTeam.bg }};border:1.5px solid {{ ctTeam.bd }};color:{{ ctTeam.color }}">
+            <span style="width:38px;height:38px;border-radius:11px;background:rgba(255,106,61,0.14);display:flex;align-items:center;justify-content:center;flex:none">🛡️</span>
+            <span style="text-align:left"><span style="display:block;font-weight:700;font-size:15px">New Team</span><span style="display:block;font-size:12px;color:#5f6d63;margin-top:2px">Register a club</span></span>
+          </button>
+        </div>
+
+        <!-- STEPPER -->
+        <div style="display:flex;align-items:flex-start;margin-bottom:26px;padding:0 6px">
+          <sc-for list="{{ steps }}" as="st" hint-placeholder-count="4">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center">
+              <div style="display:flex;align-items:center;width:100%">
+                <div style="flex:1;height:2px;background:{{ st.leftLine }}"></div>
+                <div style="width:30px;height:30px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-family:'Archivo';font-weight:800;font-size:13px;background:{{ st.circleBg }};border:2px solid {{ st.circleBorder }};color:{{ st.circleColor }}">
+                  <sc-if value="{{ st.done }}" hint-placeholder-val="{{ false }}"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2.5 6.8L5 9.2 10.5 3.5" stroke="#06160c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></sc-if>
+                  <sc-if value="{{ st.notDone }}" hint-placeholder-val="{{ true }}">{{ st.num }}</sc-if>
+                </div>
+                <div style="flex:1;height:2px;background:{{ st.rightLine }}"></div>
+              </div>
+              <div style="font-size:11.5px;font-weight:600;margin-top:9px;color:{{ st.labelColor }};text-align:center">{{ st.label }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 318px;gap:22px;align-items:start">
+
+          <!-- STEP CARD -->
+          <div style="background:#111a13;border:1px solid rgba(255,255,255,0.07);border-radius:18px;padding:26px;display:flex;flex-direction:column">
+            <div style="margin-bottom:22px">
+              <h2 style="font-family:'Archivo';font-weight:800;font-size:19px;letter-spacing:-0.3px">{{ stepTitle }}</h2>
+              <p style="color:#8c9a90;font-size:13px;margin-top:4px">{{ stepSub }}</p>
+            </div>
+
+            <!-- LEAGUE STEP 0 -->
+            <sc-if value="{{ lStep0 }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;flex-direction:column;gap:20px">
+              <div>
+                <label style="display:block;font-size:13px;font-weight:600;color:#cfd8d1;margin-bottom:8px">League name</label>
+                <input value="{{ L.name }}" onChange="{{ onLeagueName }}" placeholder="e.g. Sunday City League" style="all:unset;box-sizing:border-box;width:100%;background:#0d140f;border:1px solid rgba(255,255,255,0.09);border-radius:10px;padding:12px 14px;color:#eef2ee;font-size:14px;font-family:'Hanken Grotesk',sans-serif" style-focus="all:unset;box-sizing:border-box;width:100%;background:#0d140f;border:1px solid #34e07f;border-radius:10px;padding:12px 14px;color:#eef2ee;font-size:14px;font-family:'Hanken Grotesk',sans-serif"/>
+              </div>
+              <div>
+                <label style="display:block;font-size:13px;font-weight:600;color:#cfd8d1;margin-bottom:8px">Format</label>
+                <div style="display:flex;gap:8px">
+                  <sc-for list="{{ formatOpts }}" as="o" hint-placeholder-count="3">
+                    <button onClick="{{ o.onClick }}" style="all:unset;cursor:pointer;flex:1;text-align:center;padding:13px 8px;border-radius:11px;background:{{ o.bg }};border:1.5px solid {{ o.bd }};color:{{ o.color }}">
+                      <div style="font-weight:700;font-size:13.5px">{{ o.label }}</div>
+                      <div style="font-size:11px;color:#5f6d63;margin-top:3px">{{ o.sub }}</div>
+                    </button>
+                  </sc-for>
+                </div>
+              </div>
+              <div>
+                <label style="display:block;font-size:13px;font-weight:600;color:#cfd8d1;margin-bottom:8px">Region / venue</label>
+                <input value="{{ L.region }}" onChange="{{ onLeagueRegion }}" placeholder="Where matches are played" style="all:unset;box-sizing:border-box;width:100%;background:#0d140f;border:1px solid rgba(255,255,255,0.09);border-radius:10px;padding:12px 14px;color:#eef2ee;font-size:14px;font-family:'Hanken Grotesk',sans-serif" style-focus="all:unset;box-sizing:border-box;width:100%;background:#0d140f;border:1px solid #34e07f;border-radius:10px;padding:12px 14px;color:#eef2ee;font-size:14px;font-family:'Hanken Grotesk',sans-serif"/>
+              </div>
+              <div>
+                <label style="display:block;font-size:13px;font-weight:600;color:#cfd8d1;margin-bottom:8px">Short description</label>
+                <textarea onChange="{{ onLeagueDesc }}" rows="3" placeholder="Tell teams what your league is about" style="all:unset;box-sizing:border-box;width:100%;background:#0d140f;border:1px solid rgba(255,255,255,0.09);border-radius:10px;padding:12px 14px;color:#eef2ee;font-size:14px;font-family:'Hanken Grotesk',sans-serif;resize:none;line-height:1.5">{{ L.desc }}</textarea>
+              </div>
+            </div>
+            </sc-if>
+
+            <!-- LEAGUE STEP 1 -->
+            <sc-if value="{{ lStep1 }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:22px">
+              <div>
+                <label style="display:block;font-size:13px;font-weight:600;color:#cfd8d1;margin-bottom:10px">Number of teams</label>
+                <div style="display:flex;align-items:center;gap:16px">
+                  <button onClick="{{ decTeams }}" style="all:unset;cursor:pointer;width:40px;height:40px;border-radius:11px;background:#0d140f;border:1px solid rgba(255,255,255,0.12);color:#cfd8d1;font-size:22px;display:flex;align-items:center;justify-content:center">−</button>
+                  <div style="font-family:'Archivo';font-weight:900;font-size:28px;min-width:44px;text-align:center">{{ L.teams }}</div>
+                  <button onClick="{{ incTeams }}" style="all:unset;cursor:pointer;width:40px;height:40px;border-radius:11px;background:#0d140f;border:1px solid rgba(255,255,255,0.12);color:#cfd8d1;font-size:20px;display:flex;align-items:center;justify-content:center">+</button>
+                  <div style="color:#5f6d63;font-size:12.5px;line-height:1.4">{{ totalMatches }} matches across<br>{{ totalRounds }} rounds</div>
+                </div>
+              </div>
+              <div>
+                <label style="display:block;font-size:13px;font-weight:600;color:#cfd8d1;margin-bottom:8px">Season structure</label>
+                <div style="display:flex;gap:8px">
+                  <sc-for list="{{ roundsOpts }}" as="o" hint-placeholder-count="2">
+                    <button onClick="{{ o.onClick }}" style="all:unset;cursor:pointer;flex:1;padding:13px 14px;border-radius:11px;background:{{ o.bg }};border:1.5px solid {{ o.bd }};color:{{ o.color }}">
+                      <div style="font-weight:700;font-size:13.5px">{{ o.label }}</div>
+                      <div style="font-size:11px;color:#5f6d63;margin-top:3px">{{ o.sub }}</div>
+                    </button>
+                  </sc-for>
+                </div>
+              </div>
+              <div>
+                <label style="display:block;font-size:13px;font-weight:600;color:#cfd8d1;margin-bottom:10px">Match days</label>
+                <div style="display:flex;gap:7px;flex-wrap:wrap">
+                  <sc-for list="{{ leagueDays }}" as="c" hint-placeholder-count="7">
+                    <button onClick="{{ c.onClick }}" style="all:unset;cursor:pointer;width:46px;text-align:center;padding:10px 0;border-radius:10px;background:{{ c.bg }};border:1.5px solid {{ c.bd }};color:{{ c.color }};font-weight:700;font-size:12.5px">{{ c.d }}</button>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="max-width:240px">
+                <label style="display:block;font-size:13px;font-weight:600;color:#cfd8d1;margin-bottom:8px">Season start date</label>
+                <input type="date" value="{{ L.start }}" onChange="{{ onLeagueStart }}" style="all:unset;box-sizing:border-box;width:100%;background:#0d140f;border:1px solid rgba(255,255,255,0.09);border-radius:10px;padding:12px 14px;color:#eef2ee;font-size:14px;font-family:'Hanken Grotesk',sans-serif;color-scheme:dark"/>
+              </div>
+            </div>
+            </sc-if>
+
+            <!-- LEAGUE STEP 2 -->
+            <sc-if value="{{ lStep2 }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:22px">
+              <div>
+                <label style="display:block;font-size:13px;font-weight:600;color:#cfd8d1;margin-bottom:10px">Points awarded</label>
+                <div style="display:flex;gap:10px">
+                  <div style="flex:1;background:#0d140f;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px;text-align:center">
+                    <div style="font-size:11px;color:#5f6d63;font-weight:700;text-transform:uppercase;letter-spacing:0.5px">Win</div>
+                    <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-top:8px">
+                      <button onClick="{{ decWin }}" style="all:unset;cursor:pointer;width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,0.05);color:#cfd8d1;font-size:17px;display:flex;align-items:center;justify-content:center">−</button>
+                      <span style="font-family:'Archivo';font-weight:800;font-size:22px;min-width:20px">{{ L.win }}</span>
+                      <button onClick="{{ incWin }}" style="all:unset;cursor:pointer;width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,0.05);color:#cfd8d1;font-size:16px;display:flex;align-items:center;justify-content:center">+</button>
+                    </div>
+                  </div>
+                  <div style="flex:1;background:#0d140f;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px;text-align:center">
+                    <div style="font-size:11px;color:#5f6d63;font-weight:700;text-transform:uppercase;letter-spacing:0.5px">Draw</div>
+                    <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-top:8px">
+                      <button onClick="{{ decDraw }}" style="all:unset;cursor:pointer;width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,0.05);color:#cfd8d1;font-size:17px;display:flex;align-items:center;justify-content:center">−</button>
+                      <span style="font-family:'Archivo';font-weight:800;font-size:22px;min-width:20px">{{ L.draw }}</span>
+                      <button onClick="{{ incDraw }}" style="all:unset;cursor:pointer;width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,0.05);color:#cfd8d1;font-size:16px;display:flex;align-items:center;justify-content:center">+</button>
+                    </div>
+                  </div>
+                  <div style="flex:1;background:#0d140f;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px;text-align:center;opacity:0.7">
+                    <div style="font-size:11px;color:#5f6d63;font-weight:700;text-transform:uppercase;letter-spacing:0.5px">Loss</div>
+                    <div style="font-family:'Archivo';font-weight:800;font-size:22px;margin-top:14px">0</div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label style="display:block;font-size:13px;font-weight:600;color:#cfd8d1;margin-bottom:8px">Tiebreaker</label>
+                <div style="display:flex;gap:8px">
+                  <sc-for list="{{ tiebreakOpts }}" as="o" hint-placeholder-count="2">
+                    <button onClick="{{ o.onClick }}" style="all:unset;cursor:pointer;flex:1;text-align:center;padding:13px;border-radius:11px;background:{{ o.bg }};border:1.5px solid {{ o.bd }};color:{{ o.color }};font-weight:700;font-size:13.5px">{{ o.label }}</button>
+                  </sc-for>
+                </div>
+              </div>
+              <div>
+                <label style="display:block;font-size:13px;font-weight:600;color:#cfd8d1;margin-bottom:8px">Visibility</label>
+                <div style="display:flex;gap:8px">
+                  <sc-for list="{{ visOpts }}" as="o" hint-placeholder-count="2">
+                    <button onClick="{{ o.onClick }}" style="all:unset;cursor:pointer;flex:1;padding:14px;border-radius:11px;background:{{ o.bg }};border:1.5px solid {{ o.bd }};color:{{ o.color }}">
+                      <div style="font-weight:700;font-size:13.5px">{{ o.label }}</div>
+                      <div style="font-size:11px;color:#5f6d63;margin-top:3px;line-height:1.4">{{ o.sub }}</div>
+                    </button>
+                  </sc-for>
+                </div>
+              </div>
+              <button onClick="{{ toggleAutoFix }}" style="all:unset;cursor:pointer;display:flex;align-items:center;gap:13px;padding:14px;background:#0d140f;border-radius:12px;border:1px solid rgba(255,255,255,0.07)">
+                <span style="display:inline-flex;width:40px;height:23px;background:{{ autoFixTrackBg }};border-radius:20px;padding:2px;justify-content:{{ autoFixJustify }};flex:none;transition:all .15s"><span style="width:19px;height:19px;background:#06160c;border-radius:50%"></span></span>
+                <span><span style="display:block;font-weight:600;font-size:13.5px;color:#eef2ee">Auto-generate fixtures</span><span style="display:block;font-size:12px;color:#5f6d63">Build the full schedule automatically once teams join</span></span>
+              </button>
+            </div>
+            </sc-if>
+
+            <!-- LEAGUE STEP 3 -->
+            <sc-if value="{{ lStep3 }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:18px">
+              <div>
+                <label style="display:block;font-size:13px;font-weight:600;color:#cfd8d1;margin-bottom:8px">Invite teams by email</label>
+                <div style="display:flex;gap:8px">
+                  <input value="{{ inviteDraft }}" onChange="{{ onInviteDraft }}" onKeyDown="{{ onInviteKey }}" placeholder="team@email.com" style="all:unset;box-sizing:border-box;flex:1;background:#0d140f;border:1px solid rgba(255,255,255,0.09);border-radius:10px;padding:12px 14px;color:#eef2ee;font-size:14px;font-family:'Hanken Grotesk',sans-serif" style-focus="all:unset;box-sizing:border-box;flex:1;background:#0d140f;border:1px solid #34e07f;border-radius:10px;padding:12px 14px;color:#eef2ee;font-size:14px;font-family:'Hanken Grotesk',sans-serif"/>
+                  <button onClick="{{ addLeagueInvite }}" style="all:unset;cursor:pointer;background:rgba(52,224,127,0.12);color:#34e07f;font-weight:700;font-size:13.5px;padding:0 18px;border-radius:10px;display:flex;align-items:center">Add</button>
+                </div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <sc-for list="{{ leagueInvites }}" as="iv" hint-placeholder-count="2">
+                  <div style="display:flex;align-items:center;gap:11px;padding:10px 12px;background:#0d140f;border-radius:10px;border:1px solid rgba(255,255,255,0.05)">
+                    <span style="width:30px;height:30px;border-radius:8px;background:#1b2820;display:flex;align-items:center;justify-content:center;font-family:'Archivo';font-weight:800;font-size:11px;color:#34e07f;flex:none">{{ iv.initials }}</span>
+                    <span style="flex:1;font-size:13.5px;color:#cfd8d1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ iv.email }}</span>
+                    <span style="font-size:11px;color:#d9a925;font-weight:600">Pending</span>
+                    <button onClick="{{ iv.onRemove }}" style="all:unset;cursor:pointer;width:24px;height:24px;border-radius:7px;color:#5f6d63;font-size:16px;display:flex;align-items:center;justify-content:center" style-hover="all:unset;cursor:pointer;width:24px;height:24px;border-radius:7px;color:#e0463d;background:rgba(224,70,61,0.1);font-size:16px;display:flex;align-items:center;justify-content:center">×</button>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;padding:14px;background:rgba(52,224,127,0.06);border:1px solid rgba(52,224,127,0.18);border-radius:12px;margin-top:4px">
+                <span style="font-size:22px">✅</span>
+                <div style="font-size:13px;color:#bfe9cf;line-height:1.5">Your league is ready. Launching creates the table and {{ totalMatches }} fixtures, and emails {{ leagueInviteCount }} team invites.</div>
+              </div>
+            </div>
+            </sc-if>
+
+            <!-- TEAM STEP 0 -->
+            <sc-if value="{{ tStep0 }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:20px">
+              <div style="display:flex;gap:16px;align-items:flex-end">
+                <div style="flex:1">
+                  <label style="display:block;font-size:13px;font-weight:600;color:#cfd8d1;margin-bottom:8px">Team name</label>
+                  <input value="{{ T.name }}" onChange="{{ onTeamName }}" placeholder="e.g. Riverside FC" style="all:unset;box-sizing:border-box;width:100%;background:#0d140f;border:1px solid rgba(255,255,255,0.09);border-radius:10px;padding:12px 14px;color:#eef2ee;font-size:14px;font-family:'Hanken Grotesk',sans-serif" style-focus="all:unset;box-sizing:border-box;width:100%;background:#0d140f;border:1px solid #34e07f;border-radius:10px;padding:12px 14px;color:#eef2ee;font-size:14px;font-family:'Hanken Grotesk',sans-serif"/>
+                </div>
+                <div style="width:110px">
+                  <label style="display:block;font-size:13px;font-weight:600;color:#cfd8d1;margin-bottom:8px">Abbrev.</label>
+                  <input value="{{ T.short }}" onChange="{{ onTeamShort }}" maxlength="3" placeholder="RF" style="all:unset;box-sizing:border-box;width:100%;background:#0d140f;border:1px solid rgba(255,255,255,0.09);border-radius:10px;padding:12px 14px;color:#eef2ee;font-size:14px;font-family:'Archivo';font-weight:700;text-align:center;letter-spacing:1px" style-focus="all:unset;box-sizing:border-box;width:100%;background:#0d140f;border:1px solid #34e07f;border-radius:10px;padding:12px 14px;color:#eef2ee;font-size:14px;font-family:'Archivo';font-weight:700;text-align:center;letter-spacing:1px"/>
+                </div>
+              </div>
+              <div>
+                <label style="display:block;font-size:13px;font-weight:600;color:#cfd8d1;margin-bottom:10px">Club colour</label>
+                <div style="display:flex;gap:11px;flex-wrap:wrap">
+                  <sc-for list="{{ crestSwatches }}" as="sw" hint-placeholder-count="8">
+                    <button onClick="{{ sw.onClick }}" style="all:unset;cursor:pointer;width:36px;height:36px;border-radius:10px;background:{{ sw.c }};outline:2px solid {{ sw.ring }};outline-offset:2px"></button>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+            </sc-if>
+
+            <!-- TEAM STEP 1 -->
+            <sc-if value="{{ tStep1 }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:20px">
+              <div>
+                <label style="display:block;font-size:13px;font-weight:600;color:#cfd8d1;margin-bottom:8px">Home venue</label>
+                <input value="{{ T.venue }}" onChange="{{ onTeamVenue }}" placeholder="Your home pitch" style="all:unset;box-sizing:border-box;width:100%;background:#0d140f;border:1px solid rgba(255,255,255,0.09);border-radius:10px;padding:12px 14px;color:#eef2ee;font-size:14px;font-family:'Hanken Grotesk',sans-serif" style-focus="all:unset;box-sizing:border-box;width:100%;background:#0d140f;border:1px solid #34e07f;border-radius:10px;padding:12px 14px;color:#eef2ee;font-size:14px;font-family:'Hanken Grotesk',sans-serif"/>
+              </div>
+              <div>
+                <label style="display:block;font-size:13px;font-weight:600;color:#cfd8d1;margin-bottom:10px">Preferred match days</label>
+                <div style="display:flex;gap:7px;flex-wrap:wrap">
+                  <sc-for list="{{ teamDays }}" as="c" hint-placeholder-count="7">
+                    <button onClick="{{ c.onClick }}" style="all:unset;cursor:pointer;width:46px;text-align:center;padding:10px 0;border-radius:10px;background:{{ c.bg }};border:1.5px solid {{ c.bd }};color:{{ c.color }};font-weight:700;font-size:12.5px">{{ c.d }}</button>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="max-width:200px">
+                <label style="display:block;font-size:13px;font-weight:600;color:#cfd8d1;margin-bottom:8px">Founded</label>
+                <input value="{{ T.founded }}" onChange="{{ onTeamFounded }}" placeholder="2021" style="all:unset;box-sizing:border-box;width:100%;background:#0d140f;border:1px solid rgba(255,255,255,0.09);border-radius:10px;padding:12px 14px;color:#eef2ee;font-size:14px;font-family:'Hanken Grotesk',sans-serif" style-focus="all:unset;box-sizing:border-box;width:100%;background:#0d140f;border:1px solid #34e07f;border-radius:10px;padding:12px 14px;color:#eef2ee;font-size:14px;font-family:'Hanken Grotesk',sans-serif"/>
+              </div>
+            </div>
+            </sc-if>
+
+            <!-- TEAM STEP 2 -->
+            <sc-if value="{{ tStep2 }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <sc-for list="{{ joinLeagues }}" as="jl" hint-placeholder-count="4">
+                <button onClick="{{ jl.onClick }}" style="all:unset;cursor:pointer;display:flex;align-items:center;gap:13px;padding:14px;border-radius:13px;background:{{ jl.bg2 }};border:1.5px solid {{ jl.bd }}">
+                  <span style="width:42px;height:42px;border-radius:11px;background:{{ jl.bg }};display:flex;align-items:center;justify-content:center;font-family:'Archivo';font-weight:800;font-size:14px;color:#fff;flex:none">{{ jl.initials }}</span>
+                  <span style="flex:1;text-align:left"><span style="display:block;font-weight:700;font-size:14px">{{ jl.name }}</span><span style="display:block;font-size:12px;color:#5f6d63;margin-top:2px">{{ jl.meta }}</span></span>
+                  <span style="width:20px;height:20px;border-radius:50%;border:2px solid {{ jl.dotBd }};background:{{ jl.dot }};flex:none"></span>
+                </button>
+              </sc-for>
+            </div>
+            </sc-if>
+
+            <!-- TEAM STEP 3 -->
+            <sc-if value="{{ tStep3 }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:18px">
+              <div>
+                <label style="display:block;font-size:13px;font-weight:600;color:#cfd8d1;margin-bottom:8px">Invite players by email</label>
+                <div style="display:flex;gap:8px">
+                  <input value="{{ inviteDraft }}" onChange="{{ onInviteDraft }}" onKeyDown="{{ onInviteKey }}" placeholder="player@email.com" style="all:unset;box-sizing:border-box;flex:1;background:#0d140f;border:1px solid rgba(255,255,255,0.09);border-radius:10px;padding:12px 14px;color:#eef2ee;font-size:14px;font-family:'Hanken Grotesk',sans-serif" style-focus="all:unset;box-sizing:border-box;flex:1;background:#0d140f;border:1px solid #34e07f;border-radius:10px;padding:12px 14px;color:#eef2ee;font-size:14px;font-family:'Hanken Grotesk',sans-serif"/>
+                  <button onClick="{{ addTeamInvite }}" style="all:unset;cursor:pointer;background:rgba(52,224,127,0.12);color:#34e07f;font-weight:700;font-size:13.5px;padding:0 18px;border-radius:10px;display:flex;align-items:center">Add</button>
+                </div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <sc-for list="{{ teamInvites }}" as="iv" hint-placeholder-count="3">
+                  <div style="display:flex;align-items:center;gap:11px;padding:10px 12px;background:#0d140f;border-radius:10px;border:1px solid rgba(255,255,255,0.05)">
+                    <span style="width:30px;height:30px;border-radius:50%;background:#1b2820;display:flex;align-items:center;justify-content:center;font-family:'Archivo';font-weight:800;font-size:11px;color:#34e07f;flex:none">{{ iv.initials }}</span>
+                    <span style="flex:1;font-size:13.5px;color:#cfd8d1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ iv.email }}</span>
+                    <span style="font-size:11px;color:#d9a925;font-weight:600">Invited</span>
+                    <button onClick="{{ iv.onRemove }}" style="all:unset;cursor:pointer;width:24px;height:24px;border-radius:7px;color:#5f6d63;font-size:16px;display:flex;align-items:center;justify-content:center" style-hover="all:unset;cursor:pointer;width:24px;height:24px;border-radius:7px;color:#e0463d;background:rgba(224,70,61,0.1);font-size:16px;display:flex;align-items:center;justify-content:center">×</button>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            </sc-if>
+
+            <!-- FOOTER -->
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:28px;padding-top:22px;border-top:1px solid rgba(255,255,255,0.06)">
+              <sc-if value="{{ showBack }}" hint-placeholder-val="{{ false }}">
+                <button onClick="{{ wizardBack }}" style="all:unset;cursor:pointer;background:rgba(255,255,255,0.06);color:#cfd8d1;font-weight:700;font-size:14px;padding:12px 20px;border-radius:11px">← Back</button>
+              </sc-if>
+              <sc-if value="{{ hideBack }}" hint-placeholder-val="{{ true }}"><span></span></sc-if>
+              <button onClick="{{ wizardNext }}" style="all:unset;cursor:pointer;background:#34e07f;color:#06160c;font-weight:800;font-size:14px;padding:12px 26px;border-radius:11px;box-shadow:0 6px 18px rgba(52,224,127,0.25)" style-hover="all:unset;cursor:pointer;background:#46ec8d;color:#06160c;font-weight:800;font-size:14px;padding:12px 26px;border-radius:11px;box-shadow:0 6px 22px rgba(52,224,127,0.4)">{{ nextLabel }}</button>
+            </div>
+          </div>
+
+          <!-- LIVE SUMMARY -->
+          <div style="position:sticky;top:88px">
+            <sc-if value="{{ createLeague }}" hint-placeholder-val="{{ true }}">
+            <div style="background:linear-gradient(160deg,#13261a,#0f1b13);border:1px solid rgba(52,224,127,0.16);border-radius:18px;padding:20px;overflow:hidden">
+              <div style="font-size:11px;letter-spacing:1px;color:#34e07f;font-weight:700;text-transform:uppercase">League preview</div>
+              <div style="display:flex;align-items:center;gap:12px;margin:14px 0 16px">
+                <div style="width:48px;height:48px;border-radius:13px;background:linear-gradient(150deg,#34e07f,#1f9a52);display:flex;align-items:center;justify-content:center;flex:none"><div style="width:22px;height:22px;border:2.6px solid #07140c;border-radius:50%;position:relative;display:flex;align-items:center;justify-content:center"><div style="position:absolute;width:2.6px;height:22px;background:#07140c"></div></div></div>
+                <div style="min-width:0"><div style="font-family:'Archivo';font-weight:800;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ L.name }}</div><div style="font-size:12px;color:#8c9a90;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ L.region }}</div></div>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-top:1px solid rgba(255,255,255,0.06)"><span style="color:#8c9a90;font-size:12.5px">Format</span><span style="font-weight:600;font-size:12.5px">{{ leagueFmtLabel }}</span></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-top:1px solid rgba(255,255,255,0.06)"><span style="color:#8c9a90;font-size:12.5px">Teams</span><span style="font-weight:600;font-size:12.5px">{{ L.teams }}</span></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-top:1px solid rgba(255,255,255,0.06)"><span style="color:#8c9a90;font-size:12.5px">Structure</span><span style="font-weight:600;font-size:12.5px">{{ roundsLabel }}</span></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-top:1px solid rgba(255,255,255,0.06)"><span style="color:#8c9a90;font-size:12.5px">Match days</span><span style="font-weight:600;font-size:12.5px">{{ leagueDaysLabel }}</span></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-top:1px solid rgba(255,255,255,0.06)"><span style="color:#8c9a90;font-size:12.5px">Starts</span><span style="font-weight:600;font-size:12.5px">{{ startNice }}</span></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-top:1px solid rgba(255,255,255,0.06)"><span style="color:#8c9a90;font-size:12.5px">Points (W/D/L)</span><span style="font-weight:600;font-size:12.5px">{{ pointsLabel }}</span></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-top:1px solid rgba(255,255,255,0.06)"><span style="color:#8c9a90;font-size:12.5px">Visibility</span><span style="font-weight:600;font-size:12.5px">{{ visLabel }}</span></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-top:1px solid rgba(255,255,255,0.06)"><span style="color:#8c9a90;font-size:12.5px">Invited</span><span style="font-weight:600;font-size:12.5px;color:#34e07f">{{ leagueInviteCount }} teams</span></div>
+            </div>
+            </sc-if>
+            <sc-if value="{{ createTeam }}" hint-placeholder-val="{{ false }}">
+            <div style="background:linear-gradient(160deg,#1a2030,#0f1b13);border:1px solid rgba(255,255,255,0.1);border-radius:18px;padding:20px;overflow:hidden">
+              <div style="font-size:11px;letter-spacing:1px;color:#ff8a5f;font-weight:700;text-transform:uppercase">Team preview</div>
+              <div style="display:flex;flex-direction:column;align-items:center;margin:16px 0 18px">
+                <div style="width:66px;height:66px;border-radius:18px;background:{{ teamColor }};display:flex;align-items:center;justify-content:center;font-family:'Archivo';font-weight:900;font-size:22px;color:#fff;box-shadow:0 8px 22px rgba(0,0,0,0.35)">{{ teamShort }}</div>
+                <div style="font-family:'Archivo';font-weight:800;font-size:17px;margin-top:12px;text-align:center">{{ T.name }}</div>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-top:1px solid rgba(255,255,255,0.06)"><span style="color:#8c9a90;font-size:12.5px">Abbreviation</span><span style="font-weight:600;font-size:12.5px">{{ T.short }}</span></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-top:1px solid rgba(255,255,255,0.06)"><span style="color:#8c9a90;font-size:12.5px">Home</span><span style="font-weight:600;font-size:12.5px;max-width:150px;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ T.venue }}</span></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-top:1px solid rgba(255,255,255,0.06)"><span style="color:#8c9a90;font-size:12.5px">Match days</span><span style="font-weight:600;font-size:12.5px">{{ teamDaysLabel }}</span></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-top:1px solid rgba(255,255,255,0.06)"><span style="color:#8c9a90;font-size:12.5px">League</span><span style="font-weight:600;font-size:12.5px;max-width:150px;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ selectedJoinName }}</span></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-top:1px solid rgba(255,255,255,0.06)"><span style="color:#8c9a90;font-size:12.5px">Players invited</span><span style="font-weight:600;font-size:12.5px;color:#34e07f">{{ teamInviteCount }}</span></div>
+            </div>
+            </sc-if>
+          </div>
+
+        </div>
+      </div>
+      </sc-if>
+
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    screen: 'dashboard',
+    createTab: 'league',
+    leagueStep: 0,
+    teamStep: 0,
+    inviteDraft: '',
+    league: { name: 'Sunday City League', format: '11', region: 'Hackney Marshes, London', desc: 'Competitive 11-a-side Sunday football for East London clubs.', teams: 10, rounds: 'double', days: ['Sun'], start: '2025-09-07', win: 3, draw: 1, loss: 0, tiebreak: 'gd', autoFix: true, visibility: 'invite', invites: ['ravenswood.fc@email.com', 'olympic.ath@email.com'] },
+    team: { name: 'Riverside FC', short: 'RF', color: '#1f9a52', venue: 'Hackney Marshes P3', days: ['Sun'], founded: '2021', league: 'scl', invites: ['m.okafor@email.com', 'j.cole@email.com', 'p.larsson@email.com'] },
+  };
+
+  setField(group, key, val) { this.setState(s => ({ [group]: { ...s[group], [key]: val } })); }
+  adjust(group, key, delta, min, max) { this.setState(s => { const v = Math.max(min, Math.min(max, (s[group][key] || 0) + delta)); return { [group]: { ...s[group], [key]: v } }; }); }
+  toggleDay(group, d) { this.setState(s => { const o = s[group]; const days = o.days.includes(d) ? o.days.filter(x => x !== d) : [...o.days, d]; return { [group]: { ...o, days } }; }); }
+  addInvite(group) { this.setState(s => { const v = (s.inviteDraft || '').trim(); if (!v) return {}; return { [group]: { ...s[group], invites: [...s[group].invites, v] }, inviteDraft: '' }; }); }
+  removeInvite(group, idx) { this.setState(s => ({ [group]: { ...s[group], invites: s[group].invites.filter((_, i) => i !== idx) } })); }
+  stepNav(delta) { const key = this.state.createTab === 'league' ? 'leagueStep' : 'teamStep'; this.setState(s => ({ [key]: Math.max(0, Math.min(3, s[key] + delta)) })); }
+
+  navStyle(id) {
+    const on = this.state.screen === id;
+    return {
+      bg: on ? 'rgba(52,224,127,0.10)' : 'transparent',
+      color: on ? '#34e07f' : '#9aa89e',
+      bar: on ? '#34e07f' : 'transparent'
+    };
+  }
+
+  renderVals() {
+    const s = this.state.screen;
+    const go = (id) => () => this.setState({ screen: id });
+    const W = '#34e07f', D = '#d9a925', L = '#e0463d';
+    const fm = (str) => str.split('').map(c => ({ ch: c, bg: c === 'W' ? W : c === 'D' ? D : L }));
+
+    const rows = [
+      ['Riverside FC','RF','#1f9a52',13,10,2,1,32,'WWDWW','promo'],
+      ['Hackney Hotspurs','HH','#ff6a3d',13,9,3,1,30,'WDWWW','promo'],
+      ['Marsh United','MU','#8b5cf6',13,9,1,3,28,'LWWDW',''],
+      ['Victoria Park','VP','#14b8a6',13,7,4,2,25,'WDDWL',''],
+      ['Olympic Athletic','OA','#eab308',13,7,2,4,23,'WLWDW',''],
+      ['Clapton CFC','CC','#ec4899',13,6,3,4,21,'DWLWD',''],
+      ['Leyton Orient','LO','#ef4444',13,5,3,5,18,'LLWDW',''],
+      ['Bow Rangers','BR','#06b6d4',13,4,3,6,15,'WLLDL',''],
+      ['Mile End','ME','#84cc16',13,2,4,7,10,'LDLLW','releg'],
+      ['Shadwell Town','ST','#64748b',13,1,2,10,5,'LLLDL','releg'],
+    ];
+    const standings = rows.map((r, i) => ({
+      pos: i + 1, name: r[0], initials: r[1], crestBg: r[2],
+      p: r[3], w: r[4], d: r[5], l: r[6], pts: r[7], form: fm(r[8]),
+      accent: r[9] === 'promo' ? '#34e07f' : r[9] === 'releg' ? '#e0463d' : 'transparent',
+      rowBg: r[9] === 'promo' ? 'rgba(52,224,127,0.04)' : r[9] === 'releg' ? 'rgba(224,70,61,0.04)' : 'transparent',
+    }));
+
+    const scorers = [
+      ['M. Okafor','Riverside FC','#1f9a52',14],
+      ['J. Bennett','Hackney Hotspurs','#ff6a3d',12],
+      ['L. Silva','Marsh United','#8b5cf6',11],
+      ['T. Adeyemi','Olympic Athletic','#eab308',9],
+      ['R. Kowalski','Victoria Park','#14b8a6',8],
+    ].map((s, i) => ({ rank: i + 1, name: s[0], team: s[1], crestBg: s[2], goals: s[3], rankColor: i === 0 ? '#34e07f' : '#5f6d63' }));
+
+    const fixtures = [
+      { home: 'Riverside FC', homeBg: '#1f9a52', away: 'Marsh United', awayBg: '#8b5cf6', when: 'Sat 22 Jun 10:00', venue: 'Hackney Marshes' },
+      { home: 'Victoria Park', homeBg: '#14b8a6', away: 'Olympic Ath.', awayBg: '#eab308', when: 'Sat 22 Jun 12:00', venue: 'Mabley Green' },
+      { home: 'Clapton CFC', homeBg: '#ec4899', away: 'Leyton Orient', awayBg: '#ef4444', when: 'Sun 23 Jun 11:00', venue: 'Spring Hill' },
+    ];
+
+    const leagues = [
+      ['Sunday City League','SC','#1f9a52','11-a-side','Hackney','Sat & Sun','£45/season','2 spots left','rgba(52,224,127,0.18)','#34e07f','linear-gradient(120deg,#10301d,#0f1b13)'],
+      ['Powerleague 5s','P5','#3b82f6','5-a-side','Shoreditch','Tuesdays','£6/match','Open','rgba(59,130,246,0.2)','#7fb0ff','linear-gradient(120deg,#13202e,#0f1b13)'],
+      ['East London 7s','E7','#ff6a3d','7-a-side','Mile End','Thursdays','£8/match','4 spots left','rgba(255,106,61,0.2)','#ff9a72','linear-gradient(120deg,#2e1a12,#0f1b13)'],
+      ['Veterans Over-35','V35','#64748b','11-a-side','Wanstead','Sundays','£40/season','Waitlist','rgba(255,255,255,0.12)','#aeb9b1','linear-gradient(120deg,#1b2228,#0f1b13)'],
+      ["Women's Premier",'WP','#ec4899','11-a-side','Stratford','Saturdays','£42/season','6 spots left','rgba(236,72,153,0.2)','#ff86c2','linear-gradient(120deg,#2a1320,#0f1b13)'],
+      ['Corporate Kickabout','CK','#8b5cf6','5-a-side','Canary Wharf','Wednesdays','£7/match','Open','rgba(139,92,246,0.2)','#b69bff','linear-gradient(120deg,#1c1630,#0f1b13)'],
+    ].map(l => ({ name: l[0], initials: l[1], crestBg: l[2], format: l[3], location: l[4], day: l[5], fee: l[6], spots: l[7], tagBg: l[8], tagColor: l[9], banner: l[10] }));
+
+    const schedule = [
+      ['JUN','22','10:00','Marsh United','MU','#8b5cf6','Home','Hackney Marshes P3','RSVP','rgba(52,224,127,0.14)','#34e07f'],
+      ['JUN','29','12:00','Olympic Athletic','OA','#eab308','Away','Mabley Green','RSVP','rgba(52,224,127,0.14)','#34e07f'],
+      ['JUL','07','11:00','Clapton CFC','CC','#ec4899','Home','Spring Hill','Scheduled','rgba(255,255,255,0.07)','#9aa89e'],
+      ['JUL','13','10:00','Bow Rangers','BR','#06b6d4','Away','Wennington','Scheduled','rgba(255,255,255,0.07)','#9aa89e'],
+      ['JUL','20','12:00','Leyton Orient','LO','#ef4444','Home','Hackney Marshes P3','Scheduled','rgba(255,255,255,0.07)','#9aa89e'],
+    ].map(m => ({ mon: m[0], day: m[1], time: m[2], opp: m[3], oppShort: m[4], oppBg: m[5], haTag: m[6], venue: m[7], status: m[8], statusBg: m[9], statusColor: m[10] }));
+
+    const sq = [
+      ['1','D. Hughes','GK',13,'0/0','avail',''],
+      ['4','S. Mbeki','DF',13,'1/2','avail',''],
+      ['5','C. Romano','DF',12,'2/1','avail',''],
+      ['6','A. Khan','DF',11,'0/3','out',''],
+      ['8','P. Larsson','MF',13,'4/6','avail',''],
+      ['10','M. Okafor','MF',13,'14/5','avail',' (C)'],
+      ['7','F. Diallo','MF',10,'3/5','doubt',''],
+      ['11','J. Cole','FW',12,'7/4','avail',''],
+      ['9','E. Santos','FW',9,'5/2','avail',''],
+    ];
+    const avatarColors = ['#3b82f6','#14b8a6','#ef4444','#64748b','#eab308','#1f9a52','#8b5cf6','#ff6a3d','#06b6d4'];
+    const availMap = {
+      avail: { avail: 'Available', availBg: 'rgba(52,224,127,0.14)', availColor: '#34e07f' },
+      doubt: { avail: 'Doubtful', availBg: 'rgba(217,169,37,0.16)', availColor: '#d9a925' },
+      out: { avail: 'Out', availBg: 'rgba(224,70,61,0.16)', availColor: '#e0463d' },
+    };
+    const squad = sq.map((p, i) => ({ num: p[0], name: p[1], capMark: p[6], pos: p[2], apps: p[3], ga: p[4], avatarBg: avatarColors[i % avatarColors.length], ...availMap[p[5]] }));
+
+    const ct = this.state.createTab;
+    const isL = ct === 'league';
+    const L_ = this.state.league, T_ = this.state.team;
+    const step = isL ? this.state.leagueStep : this.state.teamStep;
+    const ctStyle = (id) => ct === id
+      ? { bg: 'rgba(52,224,127,0.10)', bd: '#34e07f', color: '#34e07f' }
+      : { bg: '#111a13', bd: 'rgba(255,255,255,0.07)', color: '#9aa89e' };
+
+    const labels = isL ? ['Basics', 'Structure', 'Rules', 'Invite'] : ['Identity', 'Home', 'League', 'Squad'];
+    const steps = labels.map((lab, i) => {
+      const done = i < step, active = i === step;
+      return {
+        num: i + 1, label: lab, done, notDone: !done,
+        circleBg: done ? '#34e07f' : active ? 'rgba(52,224,127,0.12)' : '#0d140f',
+        circleBorder: done || active ? '#34e07f' : 'rgba(255,255,255,0.12)',
+        circleColor: done ? '#06160c' : active ? '#34e07f' : '#5f6d63',
+        labelColor: active ? '#eef2ee' : done ? '#9aa89e' : '#5f6d63',
+        leftLine: i === 0 ? 'transparent' : (i <= step ? '#34e07f' : 'rgba(255,255,255,0.1)'),
+        rightLine: i === labels.length - 1 ? 'transparent' : (i < step ? '#34e07f' : 'rgba(255,255,255,0.1)'),
+      };
+    });
+
+    const seg = (cur, v) => cur === v
+      ? { bg: 'rgba(52,224,127,0.12)', bd: '#34e07f', color: '#34e07f' }
+      : { bg: '#0d140f', bd: 'rgba(255,255,255,0.09)', color: '#9aa89e' };
+    const segOpts = (cur, group, key, arr) => arr.map(o => ({ ...seg(cur, o.v), label: o.label, sub: o.sub || '', onClick: () => this.setField(group, key, o.v) }));
+
+    const formatOpts = segOpts(L_.format, 'league', 'format', [
+      { v: '5', label: '5-a-side', sub: 'Futsal / small' },
+      { v: '7', label: '7-a-side', sub: 'Mid-size' },
+      { v: '11', label: '11-a-side', sub: 'Full pitch' },
+    ]);
+    const roundsOpts = segOpts(L_.rounds, 'league', 'rounds', [
+      { v: 'single', label: 'Single round', sub: 'Play each team once' },
+      { v: 'double', label: 'Double round', sub: 'Home & away legs' },
+    ]);
+    const tiebreakOpts = segOpts(L_.tiebreak, 'league', 'tiebreak', [
+      { v: 'gd', label: 'Goal difference', sub: '' },
+      { v: 'h2h', label: 'Head-to-head', sub: '' },
+    ]);
+    const visOpts = segOpts(L_.visibility, 'league', 'visibility', [
+      { v: 'public', label: 'Public', sub: 'Anyone can find & request to join' },
+      { v: 'invite', label: 'Invite-only', sub: 'You approve every team' },
+    ]);
+
+    const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const dayChips = (group, days) => DAYS.map(d => {
+      const sel = days.includes(d);
+      return { d, bg: sel ? '#34e07f' : '#0d140f', bd: sel ? '#34e07f' : 'rgba(255,255,255,0.09)', color: sel ? '#06160c' : '#9aa89e', onClick: () => this.toggleDay(group, d) };
+    });
+    const leagueDays = dayChips('league', L_.days);
+    const teamDays = dayChips('team', T_.days);
+
+    const leagueInvites = L_.invites.map((e, i) => ({ email: e, initials: e.slice(0, 2).toUpperCase(), onRemove: () => this.removeInvite('league', i) }));
+    const teamInvites = T_.invites.map((e, i) => ({ email: e, initials: e.slice(0, 2).toUpperCase(), onRemove: () => this.removeInvite('team', i) }));
+
+    const CRESTS = ['#1f9a52', '#3b82f6', '#ff6a3d', '#8b5cf6', '#eab308', '#ec4899', '#06b6d4', '#ef4444'];
+    const crestSwatches = CRESTS.map(c => ({ c, ring: T_.color === c ? '#34e07f' : 'transparent', onClick: () => this.setField('team', 'color', c) }));
+
+    const joinLeagues = [
+      { id: 'scl', name: 'Sunday City League', meta: '11-a-side · Hackney · 2 spots', initials: 'SC', bg: '#1f9a52' },
+      { id: 'e7', name: 'East London 7s', meta: '7-a-side · Mile End · 4 spots', initials: 'E7', bg: '#ff6a3d' },
+      { id: 'p5', name: 'Powerleague 5s', meta: '5-a-side · Shoreditch · Open', initials: 'P5', bg: '#3b82f6' },
+      { id: 'none', name: 'Skip for now', meta: 'Create the team and join a league later', initials: '—', bg: '#33433a' },
+    ].map(l => ({ ...l, sel: T_.league === l.id, bd: T_.league === l.id ? '#34e07f' : 'rgba(255,255,255,0.08)', bg2: T_.league === l.id ? 'rgba(52,224,127,0.06)' : '#0d140f', dot: T_.league === l.id ? '#34e07f' : 'rgba(255,255,255,0.18)', dotBd: T_.league === l.id ? '#34e07f' : 'rgba(255,255,255,0.25)', onClick: () => this.setField('team', 'league', l.id) }));
+
+    const fmtMap = { '5': '5-a-side', '7': '7-a-side', '11': '11-a-side' };
+    const startNice = (() => { try { return new Date(L_.start + 'T00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); } catch (e) { return L_.start; } })();
+    const selectedJoin = joinLeagues.find(l => l.sel);
+    const stepTitles = isL
+      ? ['League basics', 'Competition structure', 'Rules & scoring', 'Invite teams & launch']
+      : ['Team identity', 'Home ground', 'Choose a league', 'Build your squad'];
+    const stepSubs = isL
+      ? ['Name your competition and pick a format', 'Set the size and shape of the season', 'Define how points and ranking work', 'Send invites and review before going live']
+      : ['Name, badge and club colours', 'Where and when you play', 'Register in a league, or skip for now', 'Invite players and review your team'];
+    const teamsN = L_.teams;
+    const showBack = step > 0, isLast = step === 3;
+
+    const titles = { dashboard: 'Standings', browse: 'Discover', schedule: 'Schedule', teams: 'My Team', profile: 'Profile', create: 'Create' };
+
+    return {
+      pageTitle: titles[s],
+      isDashboard: s === 'dashboard', isBrowse: s === 'browse', isSchedule: s === 'schedule',
+      isTeams: s === 'teams', isProfile: s === 'profile', isCreate: s === 'create',
+      goDashboard: go('dashboard'), goBrowse: go('browse'), goSchedule: go('schedule'),
+      goTeams: go('teams'), goProfile: go('profile'), goCreate: go('create'),
+      navDash: this.navStyle('dashboard'), navBrowse: this.navStyle('browse'), navSchedule: this.navStyle('schedule'),
+      navTeams: this.navStyle('teams'), navProfile: this.navStyle('profile'),
+      standings, scorers, fixtures, leagues, schedule, squad,
+      tabLeague: () => this.setState({ createTab: 'league' }),
+      tabTeam: () => this.setState({ createTab: 'team' }),
+      createLeague: isL, createTeam: !isL,
+      ctLeague: ctStyle('league'), ctTeam: ctStyle('team'),
+      steps, stepTitle: stepTitles[step], stepSub: stepSubs[step],
+      lStep0: isL && step === 0, lStep1: isL && step === 1, lStep2: isL && step === 2, lStep3: isL && step === 3,
+      tStep0: !isL && step === 0, tStep1: !isL && step === 1, tStep2: !isL && step === 2, tStep3: !isL && step === 3,
+      L: L_, T: T_,
+      onLeagueName: e => this.setField('league', 'name', e.target.value),
+      onLeagueRegion: e => this.setField('league', 'region', e.target.value),
+      onLeagueDesc: e => this.setField('league', 'desc', e.target.value),
+      onLeagueStart: e => this.setField('league', 'start', e.target.value),
+      formatOpts, roundsOpts, tiebreakOpts, visOpts, leagueDays, teamDays,
+      incTeams: () => this.adjust('league', 'teams', 1, 2, 30),
+      decTeams: () => this.adjust('league', 'teams', -1, 2, 30),
+      incWin: () => this.adjust('league', 'win', 1, 0, 9), decWin: () => this.adjust('league', 'win', -1, 0, 9),
+      incDraw: () => this.adjust('league', 'draw', 1, 0, 9), decDraw: () => this.adjust('league', 'draw', -1, 0, 9),
+      toggleAutoFix: () => this.setField('league', 'autoFix', !L_.autoFix),
+      autoFixTrackBg: L_.autoFix ? '#34e07f' : '#33433a', autoFixJustify: L_.autoFix ? 'flex-end' : 'flex-start',
+      onTeamName: e => this.setField('team', 'name', e.target.value),
+      onTeamShort: e => this.setField('team', 'short', e.target.value.toUpperCase().slice(0, 3)),
+      onTeamVenue: e => this.setField('team', 'venue', e.target.value),
+      onTeamFounded: e => this.setField('team', 'founded', e.target.value),
+      crestSwatches, joinLeagues, teamColor: T_.color, teamShort: T_.short || '?',
+      leagueInvites, teamInvites, leagueInviteCount: L_.invites.length, teamInviteCount: T_.invites.length,
+      inviteDraft: this.state.inviteDraft,
+      onInviteDraft: e => this.setState({ inviteDraft: e.target.value }),
+      addLeagueInvite: () => this.addInvite('league'),
+      addTeamInvite: () => this.addInvite('team'),
+      onInviteKey: (e) => { if (e.key === 'Enter') { e.preventDefault(); this.addInvite(isL ? 'league' : 'team'); } },
+      leagueFmtLabel: fmtMap[L_.format], startNice,
+      leagueDaysLabel: L_.days.length ? L_.days.join(', ') : 'Not set',
+      teamDaysLabel: T_.days.length ? T_.days.join(', ') : 'Not set',
+      roundsLabel: L_.rounds === 'double' ? 'Double round-robin' : 'Single round-robin',
+      visLabel: L_.visibility === 'public' ? 'Public' : 'Invite-only',
+      tiebreakLabel: L_.tiebreak === 'gd' ? 'Goal difference' : 'Head-to-head',
+      pointsLabel: L_.win + ' / ' + L_.draw + ' / ' + L_.loss,
+      totalRounds: (L_.rounds === 'double' ? 2 : 1) * (teamsN - 1),
+      totalMatches: (L_.rounds === 'double' ? teamsN * (teamsN - 1) : teamsN * (teamsN - 1) / 2),
+      selectedJoinName: selectedJoin ? selectedJoin.name : 'Not selected',
+      showBack, hideBack: !showBack, isLast,
+      nextLabel: isLast ? (isL ? 'Launch league' : 'Create team') : 'Continue',
+      wizardBack: () => this.stepNav(-1),
+      wizardNext: () => this.stepNav(1),
+    };
+  }
+}
+</script>
+</body>
+</html>

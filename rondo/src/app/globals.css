@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+@theme inline {
+  /* Background */
+  --color-base: #0b110d;
+  --color-surface: #111a13;
+  --color-surface-alt: #131c15;
+  --color-sidebar: #0e150f;
+  --color-input: #0d140f;
+  --color-elevated: #161f18;
+
+  /* Border */
+  --color-border: rgba(255, 255, 255, 0.07);
+  --color-border-subtle: rgba(255, 255, 255, 0.06);
+  --color-border-muted: rgba(255, 255, 255, 0.045);
+  --color-border-strong: rgba(255, 255, 255, 0.12);
+
+  /* Text */
+  --color-primary: #eef2ee;
+  --color-secondary: #9aa89e;
+  --color-muted: #8c9a90;
+  --color-dim: #5f6d63;
+  --color-heading: #cfd8d1;
+  --color-dark: #4f5b52;
+
+  /* Accent */
+  --color-accent: #34e07f;
+  --color-accent-dark: #1f9a52;
+  --color-accent-darker: #06160c;
+
+  /* Status */
+  --color-win: #34e07f;
+  --color-draw: #d9a925;
+  --color-loss: #e0463d;
+  --color-orange: #ff8a5f;
+
+  /* Fonts */
+  --font-heading: "Archivo", system-ui, sans-serif;
+  --font-body: "Hanken Grotesk", system-ui, sans-serif;
+}
+
+/* Base reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--color-base);
+  color: var(--color-primary);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #26342b;
+  border-radius: 8px;
+  border: 2px solid var(--color-base);
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Glow animation for branding */
+@keyframes rondoGlow {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
