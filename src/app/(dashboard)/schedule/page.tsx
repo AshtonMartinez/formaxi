@@ -6,11 +6,11 @@ import { cn } from "@/lib/utils";
 import type { ScheduleMatch } from "@/lib/types";
 
 const schedule: ScheduleMatch[] = [
-  { month: "JUN", day: "22", time: "10:00", opponent: "Marsh United", opponentShort: "MU", opponentColor: "#8b5cf6", homeAway: "Home", venue: "Hackney Marshes P3", status: "RSVP", statusVariant: "action" },
-  { month: "JUN", day: "29", time: "12:00", opponent: "Olympic Athletic", opponentShort: "OA", opponentColor: "#eab308", homeAway: "Away", venue: "Mabley Green", status: "RSVP", statusVariant: "action" },
-  { month: "JUL", day: "07", time: "11:00", opponent: "Clapton CFC", opponentShort: "CC", opponentColor: "#ec4899", homeAway: "Home", venue: "Spring Hill", status: "Scheduled", statusVariant: "neutral" },
-  { month: "JUL", day: "13", time: "10:00", opponent: "Bow Rangers", opponentShort: "BR", opponentColor: "#06b6d4", homeAway: "Away", venue: "Wennington", status: "Scheduled", statusVariant: "neutral" },
-  { month: "JUL", day: "20", time: "12:00", opponent: "Leyton Orient", opponentShort: "LO", opponentColor: "#ef4444", homeAway: "Home", venue: "Hackney Marshes P3", status: "Scheduled", statusVariant: "neutral" },
+  { month: "JUL", day: "05", time: "10:00", opponent: "Marsh United",     opponentShort: "MU", opponentColor: "#8b5cf6", homeAway: "Home", venue: "Hackney Marshes P3", status: "RSVP",      statusVariant: "action"  },
+  { month: "JUL", day: "12", time: "12:00", opponent: "Olympic Athletic", opponentShort: "OA", opponentColor: "#eab308", homeAway: "Away", venue: "Mabley Green",       status: "RSVP",      statusVariant: "action"  },
+  { month: "JUL", day: "19", time: "11:00", opponent: "Clapton CFC",      opponentShort: "CC", opponentColor: "#ec4899", homeAway: "Home", venue: "Spring Hill",        status: "Scheduled", statusVariant: "neutral" },
+  { month: "JUL", day: "26", time: "10:00", opponent: "Bow Rangers",      opponentShort: "BR", opponentColor: "#06b6d4", homeAway: "Away", venue: "Wennington",         status: "Scheduled", statusVariant: "neutral" },
+  { month: "AUG", day: "02", time: "12:00", opponent: "Leyton Orient",    opponentShort: "LO", opponentColor: "#ef4444", homeAway: "Home", venue: "Hackney Marshes P3", status: "Scheduled", statusVariant: "neutral" },
 ];
 
 type ViewMode = "list" | "calendar";
@@ -82,24 +82,20 @@ function ListView() {
 
 // ── Calendar view ───────────────────────────────────────────────
 
-// Build a simple month grid showing June and July 2025
 function CalendarMonth({ month, year, matches }: { month: number; year: number; matches: ScheduleMatch[] }) {
   const monthNames = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  const firstDay = new Date(year, month - 1, 1).getDay(); // 0=Sun
+  const firstDay = new Date(year, month - 1, 1).getDay();
   const daysInMonth = new Date(year, month, 0).getDate();
 
-  // Map day number -> match
   const matchByDay = new Map<number, ScheduleMatch>();
   for (const m of matches) {
     matchByDay.set(parseInt(m.day), m);
   }
 
   const cells: (number | null)[] = [];
-  // Pad start (Mon=0 in our grid)
   const startPad = firstDay === 0 ? 6 : firstDay - 1;
   for (let i = 0; i < startPad; i++) cells.push(null);
   for (let d = 1; d <= daysInMonth; d++) cells.push(d);
-  // Pad end to fill row
   while (cells.length % 7 !== 0) cells.push(null);
 
   return (
@@ -108,19 +104,20 @@ function CalendarMonth({ month, year, matches }: { month: number; year: number; 
         {monthNames[month]} {year}
       </h3>
 
-      {/* Day headers */}
       <div className="grid grid-cols-7 gap-px mb-1">
         {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
           <div key={d} className="text-[11px] text-dim font-bold text-center py-1">{d}</div>
         ))}
       </div>
 
-      {/* Day cells */}
       <div className="grid grid-cols-7 gap-px">
         {cells.map((day, i) => {
           const match = day ? matchByDay.get(day) : undefined;
           const today = new Date();
-          const isToday = day === today.getDate() && month === today.getMonth() + 1 && year === today.getFullYear();
+          const isToday =
+            day === today.getDate() &&
+            month === today.getMonth() + 1 &&
+            year === today.getFullYear();
 
           return (
             <div
@@ -159,13 +156,13 @@ function CalendarMonth({ month, year, matches }: { month: number; year: number; 
 }
 
 function CalendarView() {
-  const junMatches = schedule.filter((m) => m.month === "JUN");
   const julMatches = schedule.filter((m) => m.month === "JUL");
+  const augMatches = schedule.filter((m) => m.month === "AUG");
 
   return (
     <>
-      <CalendarMonth month={6} year={2025} matches={junMatches} />
-      <CalendarMonth month={7} year={2025} matches={julMatches} />
+      <CalendarMonth month={7} year={2026} matches={julMatches} />
+      <CalendarMonth month={8} year={2026} matches={augMatches} />
     </>
   );
 }
@@ -192,23 +189,23 @@ function NextMatchDetail() {
       </div>
 
       <div className="text-center text-secondary text-[13px] my-3.5 mb-[18px] p-2.5 bg-black/20 rounded-[10px]">
-        Sat 22 Jun · 10:00<br />
+        Sun 5 Jul · 10:00<br />
         <span className="text-dim text-xs">Hackney Marshes · Pitch 3</span>
       </div>
 
       <div className="text-xs text-muted font-bold mb-[9px] flex justify-between">
         Squad availability
-        <span className="text-accent">{rsvp === "in" ? "12" : rsvp === "out" ? "11" : "11"} confirmed</span>
+        <span className="text-accent">{rsvp === "in" ? "12" : "11"} confirmed</span>
       </div>
       <div className="flex h-2 rounded-[5px] overflow-hidden mb-2">
         <div className="bg-accent" style={{ flex: rsvp === "in" ? 12 : 11 }} />
         <div className="bg-loss" style={{ flex: rsvp === "out" ? 3 : 2 }} />
-        <div className="bg-[#33433a]" style={{ flex: rsvp ? (rsvp === "in" ? 2 : 2) : 3 }} />
+        <div className="bg-[#33433a]" style={{ flex: rsvp ? 2 : 3 }} />
       </div>
       <div className="flex gap-3.5 text-[11.5px] text-muted">
         <span>● {rsvp === "in" ? 12 : 11} In</span>
         <span className="text-loss">● {rsvp === "out" ? 3 : 2} Out</span>
-        <span>● {rsvp ? (rsvp === "in" ? 2 : 2) : 3} Pending</span>
+        <span>● {rsvp ? 2 : 3} Pending</span>
       </div>
 
       <div className="flex gap-2 mt-[18px]">

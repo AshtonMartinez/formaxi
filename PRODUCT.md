@@ -57,6 +57,10 @@ A browseable directory of open leagues nearby. Cards show format (5v5, 7v7, 11v1
 ### Schedule (`/schedule`)
 A player's upcoming match calendar. Two views: chronological list and monthly calendar grid. Each match shows date, time, opponent, venue, and home/away status. A sticky sidebar shows the next match with squad availability (confirmed/out/pending) and an RSVP widget.
 
+Players can set availability blockers on their profile: recurring windows (e.g. Mon–Fri 9–5, or every Sunday before 10am) and one-off date ranges (e.g. away 3rd–5th July). These persist across the season and feed into the smart scheduling system.
+
+When an organizer or captain schedules a fixture, the app scores candidate time slots against both squads' blockers and surfaces ranked suggestions showing how many players from each side are free. The organizer picks from the suggestions or sets a custom time. Once scheduled, players whose blockers conflict with the fixture are automatically pre-filled as unavailable in RSVP, though they can override this.
+
 ### My Team (`/team`)
 Team management organized into four tabs: Squad (roster with availability), Fixtures (upcoming and results), Stats (player stats table and season overview), and Settings (team details, league membership, danger zone).
 
@@ -66,7 +70,7 @@ Individual player profile with career stats (matches, goals, assists, MOTM, win 
 ### Create (`/create`)
 A guided multi-step wizard for creating a league or a team.
 
-**New League** (4 steps): name/format/region, competition structure (teams, single/double round-robin, match days, start date), rules (points, tiebreaker, visibility, auto-fixture generation), invite teams and launch.
+**New League** (4 steps): name/format/region, competition structure (teams, divisions, single/double round-robin, match days, start date), rules (points, tiebreaker, visibility, auto-fixture generation), invite teams and launch. Every league has at least one division — simple leagues leave it at the default and never think about it again. Organizers who want a tiered structure can add more divisions to their league. Team placement across divisions is always under organizer control — teams can be manually moved between divisions at any time. Optionally, organizers can configure promotion and relegation spot counts per division, which highlights the relevant positions in the standings table and prompts the organizer at season end; but nothing moves automatically. Promotion and relegation always stays within the same league.
 
 **New Team** (4 steps): name/abbreviation/colour, home ground and match days, choose a league, invite players.
 
@@ -101,8 +105,8 @@ A layer that connects league organizers to each other on the platform. Organizer
 ### Phase 5 — Tournaments and cross-league cups
 A tournament bracket system that sits above the regular season. An organizer creates a cup competition, selects participating teams (from one or multiple leagues), and the platform handles draws, fixtures, and results separately from the regular league table. Teams can be competing in their Sunday league and a cup simultaneously.
 
-### Phase 6 — Promotion, relegation, and tiered structures
-Multiple leagues in the same region can link themselves into a pyramid: top two teams from Division 2 go up to Division 1, bottom two come down. The platform tracks this across seasons. Over time this creates a living, self-organizing hierarchy of amateur football in a city.
+### Phase 6 — Transfers
+The ability to move players and teams across leagues on the platform. This covers two cases: a single player transferring from one team to another (in any league), and an entire team transferring from one league to another. Transfers are initiated by the player or captain and require acceptance from the receiving team or league organizer. Promotion and relegation within a league are handled automatically by the divisions system and are not transfers — transfers are voluntary moves between distinct leagues.
 
 ### Phase 7 — Mobile-first experience
 The current UI is desktop-first. The most common use case — checking the schedule before Sunday, RSVPing, seeing the table — is mobile. A mobile-optimized or native-app experience is essential for the platform to reach casual Tier 1 users at scale.

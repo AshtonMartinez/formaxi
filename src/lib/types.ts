@@ -11,9 +11,14 @@ export interface TeamStanding {
   won: number;
   drawn: number;
   lost: number;
+  goalsFor: number;
+  goalsAgainst: number;
+  goalDiff: number;
   points: number;
   form: FormResult[];
   zone: "promotion" | "relegation" | null;
+  /** Division this team belongs to. Defaults to "1" for single-division leagues. */
+  divisionId?: string;
 }
 
 export interface TopScorer {
@@ -69,6 +74,8 @@ export interface LeagueCard {
   tagColor: string;
   tagBg: string;
   bannerGradient: string;
+  /** Number of divisions in this league. Omit or set to 1 for single-division. */
+  divisions?: number;
 }
 
 export interface NavItem {
