@@ -4,7 +4,9 @@ import Link from "next/link";
 import { NavItem } from "./nav-item";
 import { Avatar } from "@/components/ui";
 import { cn } from "@/lib/utils";
-import { PlusIcon, StandingsIcon, DiscoverIcon, ScheduleIcon, TeamIcon, ProfileIcon, CloseIcon } from "@/components/icons";
+import { logout } from "@/app/(auth)/actions";
+import type { SidebarContext } from "@/lib/supabase/queries";
+import { PlusIcon, StandingsIcon, DiscoverIcon, ScheduleIcon, TeamIcon, ProfileIcon, ManageIcon, CloseIcon } from "@/components/icons";
 
 function FormaxiLogo() {
   return (
@@ -18,9 +20,10 @@ function FormaxiLogo() {
 interface SidebarProps {
   open?: boolean;
   onClose?: () => void;
+  user?: SidebarContext | null;
 }
 
-export function Sidebar({ open = false, onClose }: SidebarProps) {
+export function Sidebar({ open = false, onClose, user = null }: SidebarProps) {
   return (
     <>
       {/* Backdrop (mobile only) */}
@@ -46,8 +49,8 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
             <div className="font-heading text-[19px] font-black leading-none tracking-[-0.5px]">
               FormaXI
             </div>
-            <div className="mt-0.5 text-[10px] font-semibold uppercase tracking-[1.5px] text-dim">
-              Sunday City League
+            <div className="mt-0.5 truncate text-[10px] font-semibold uppercase tracking-[1.5px] text-dim">
+              {user?.leagueName ?? "Football League Manager"}
             </div>
           </div>
           {/* Close button (mobile only) */}
@@ -76,6 +79,7 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
         </div>
         <nav className="flex flex-col gap-0.5 px-3" onClick={onClose}>
           <NavItem href="/team" label="My Team" icon={<TeamIcon />} />
+          <NavItem href="/manage" label="Organize" icon={<ManageIcon />} />
           <NavItem href="/profile" label="Profile" icon={<ProfileIcon />} />
         </nav>
 
@@ -89,25 +93,47 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
             Create
           </Link>
 
-          <Link
-            href="/profile"
-            className="mt-3 flex items-center gap-2.5 rounded-xl p-2 transition-colors hover:bg-white/[0.04]"
-          >
-            <Avatar
-              initials="SR"
-              color="#3b82f6"
-              size="sm"
-              shape="circle"
-              className="h-[34px] w-[34px]"
-              style={{ background: "linear-gradient(135deg, #3b82f6, #8b5cf6)" }}
-            />
-            <div className="overflow-hidden text-left leading-tight">
-              <div className="whitespace-nowrap text-[13px] font-bold">Sam Rivera</div>
-              <div className="whitespace-nowrap text-[11px] text-dim">
-                Captain · Riverside FC
-              </div>
+          {user ? (
+            <div className="mt-3 flex items-center gap-1">
+              <Link
+                href="/profile"
+                className="flex min-w-0 flex-1 items-center gap-2.5 rounded-xl p-2 transition-colors hover:bg-white/[0.04]"
+              >
+                <Avatar
+                  initials={user.initials}
+                  color="#1f9a52"
+                  size="sm"
+                  shape="circle"
+                  className="h-[34px] w-[34px]"
+                  style={{ background: "linear-gradient(135deg, #1f9a52, #14b8a6)" }}
+                />
+                <div className="overflow-hidden text-left leading-tight">
+                  <div className="truncate text-[13px] font-bold">{user.displayName}</div>
+                  <div className="truncate text-[11px] text-dim">{user.roleLine}</div>
+                </div>
+              </Link>
+              <form action={logout}>
+                <button
+                  type="submit"
+                  aria-label="Sign out"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg text-secondary transition-colors hover:bg-white/[0.06] hover:text-loss"
+                >
+                  <svg width={17} height={17} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <polyline points="16 17 21 12 16 7" />
+                    <line x1="21" y1="12" x2="9" y2="12" />
+                  </svg>
+                </button>
+              </form>
             </div>
-          </Link>
+          ) : (
+            <Link
+              href="/login"
+              className="mt-3 flex items-center justify-center gap-2 rounded-xl border border-border bg-surface-alt py-2.5 text-[13px] font-bold text-heading transition-colors hover:bg-white/[0.06]"
+            >
+              Sign in
+            </Link>
+          )}
         </div>
       </aside>
     </>
