@@ -56,6 +56,14 @@ export const ProfileIcon = makeIcon(
   </>
 );
 
+export const ManageIcon = makeIcon(
+  <>
+    <path d="M2 5h7M13 5h3M2 13h3M9 13h7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    <circle cx="11" cy="5" r="2.1" stroke="currentColor" strokeWidth="1.6" />
+    <circle cx="7" cy="13" r="2.1" stroke="currentColor" strokeWidth="1.6" />
+  </>
+);
+
 export const SearchIcon = makeIcon(
   <>
     <circle cx="6.4" cy="6.4" r="4.8" stroke="currentColor" strokeWidth="1.5" />

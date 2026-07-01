@@ -40,6 +40,8 @@ export interface Fixture {
 
 export interface ScheduleMatch {
   month: string;
+  /** Calendar year of the fixture; 0 when no kickoff time is set yet. */
+  year: number;
   day: string;
   time: string;
   opponent: string;
@@ -76,6 +78,25 @@ export interface LeagueCard {
   bannerGradient: string;
   /** Number of divisions in this league. Omit or set to 1 for single-division. */
   divisions?: number;
+}
+
+/**
+ * A pending request to add a team to a league, in either direction.
+ * Mirrors the unified `league_applications` table (see docs/SCHEMA.md):
+ * `application` = user applied via Discover; `invitation` = organizer invited a captain.
+ */
+export type ApplicationKind = "application" | "invitation";
+
+export interface LeagueApplication {
+  id: string;
+  kind: ApplicationKind;
+  teamName: string;
+  teamInitials: string;
+  teamColor: string;
+  /** The prospective captain's display name. */
+  personName: string;
+  /** Optional note from the initiator. */
+  message?: string;
 }
 
 export interface NavItem {
