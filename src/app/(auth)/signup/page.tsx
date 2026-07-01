@@ -1,13 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useActionState } from "react";
 import { Card, Button } from "@/components/ui";
+import { signup } from "../actions";
 
 export default function SignupPage() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [state, action, pending] = useActionState(signup, undefined);
 
   return (
     <Card className="w-full max-w-[400px]">
@@ -18,16 +17,16 @@ export default function SignupPage() {
         Join FormaXI to manage your team and league
       </p>
 
-      <div className="flex flex-col gap-4">
+      <form action={action} className="flex flex-col gap-4">
         <div>
           <label className="block text-[13px] font-semibold text-heading mb-2">
             Display name
           </label>
           <input
             type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Sam Rivera"
+            name="name"
+            autoComplete="name"
+            placeholder="Marcus Okafor"
             className="w-full bg-input border border-white/[0.09] rounded-[10px] px-3.5 py-3 text-primary text-sm font-body outline-none focus:border-accent transition-colors placeholder:text-dim"
           />
         </div>
@@ -38,8 +37,8 @@ export default function SignupPage() {
           </label>
           <input
             type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            name="email"
+            autoComplete="email"
             placeholder="you@example.com"
             className="w-full bg-input border border-white/[0.09] rounded-[10px] px-3.5 py-3 text-primary text-sm font-body outline-none focus:border-accent transition-colors placeholder:text-dim"
           />
@@ -51,17 +50,24 @@ export default function SignupPage() {
           </label>
           <input
             type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            name="password"
+            autoComplete="new-password"
             placeholder="At least 8 characters"
             className="w-full bg-input border border-white/[0.09] rounded-[10px] px-3.5 py-3 text-primary text-sm font-body outline-none focus:border-accent transition-colors placeholder:text-dim"
           />
         </div>
 
-        <Button variant="primary" size="lg" className="mt-2">
-          Create account
+        {state?.error && (
+          <p className="text-[12.5px] text-loss font-semibold">{state.error}</p>
+        )}
+        {state?.notice && (
+          <p className="text-[12.5px] text-accent font-semibold">{state.notice}</p>
+        )}
+
+        <Button type="submit" variant="primary" size="lg" className="mt-2" disabled={pending}>
+          {pending ? "Creating account…" : "Create account"}
         </Button>
-      </div>
+      </form>
 
       <p className="mt-5 pt-5 border-t border-border text-center text-[13px] text-muted">
         Already have an account?{" "}

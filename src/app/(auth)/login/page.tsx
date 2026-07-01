@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useActionState } from "react";
 import { Card, Button } from "@/components/ui";
+import { login } from "../actions";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [state, action, pending] = useActionState(login, undefined);
 
   return (
     <Card className="w-full max-w-[400px]">
@@ -17,15 +17,15 @@ export default function LoginPage() {
         Sign in to your FormaXI account
       </p>
 
-      <div className="flex flex-col gap-4">
+      <form action={action} className="flex flex-col gap-4">
         <div>
           <label className="block text-[13px] font-semibold text-heading mb-2">
             Email
           </label>
           <input
             type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            name="email"
+            autoComplete="email"
             placeholder="you@example.com"
             className="w-full bg-input border border-white/[0.09] rounded-[10px] px-3.5 py-3 text-primary text-sm font-body outline-none focus:border-accent transition-colors placeholder:text-dim"
           />
@@ -42,17 +42,21 @@ export default function LoginPage() {
           </div>
           <input
             type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            name="password"
+            autoComplete="current-password"
             placeholder="••••••••"
             className="w-full bg-input border border-white/[0.09] rounded-[10px] px-3.5 py-3 text-primary text-sm font-body outline-none focus:border-accent transition-colors placeholder:text-dim"
           />
         </div>
 
-        <Button variant="primary" size="lg" className="mt-2">
-          Sign in
+        {state?.error && (
+          <p className="text-[12.5px] text-loss font-semibold">{state.error}</p>
+        )}
+
+        <Button type="submit" variant="primary" size="lg" className="mt-2" disabled={pending}>
+          {pending ? "Signing in…" : "Sign in"}
         </Button>
-      </div>
+      </form>
 
       <div className="mt-5 pt-5 border-t border-border flex flex-col gap-2.5 text-center">
         <p className="text-[13px] text-muted">
