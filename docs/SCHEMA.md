@@ -47,7 +47,6 @@ create table public.leagues (
                               check (visibility in ('public', 'private')),
   rounds        text        not null default 'double'
                               check (rounds in ('single', 'double')),
-  auto_fixture  boolean     not null default true,
   points_win    smallint    not null default 3  check (points_win  >= 0),
   points_draw   smallint    not null default 1  check (points_draw >= 0),
   tiebreak      text        not null default 'gd'
@@ -61,8 +60,7 @@ create table public.leagues (
 | Column | Maps to |
 |---|---|
 | `description` | Create wizard Step 0 "Short description" textarea |
-| `rounds` | Create wizard Step 1 "Single/Double round" toggle |
-| `auto_fixture` | Create wizard Step 2 "Auto-generate fixtures" toggle |
+| `rounds` | Create wizard Step 1 "Single/Double round" toggle. Consumed by the `generate_fixtures` action, not at creation. |
 | `points_win` / `points_draw` | Create wizard Step 2 "Points awarded" steppers |
 | `tiebreak` | Create wizard Step 2 tiebreaker toggle |
 
@@ -167,7 +165,7 @@ create table public.team_players (
 
 ### `seasons`
 
-A season ties fixtures to a league and tracks status. A league has one active season at a time for MVP.
+A season ties fixtures to a league and tracks status. A league has one active season at a time for MVP. A season is **created at league launch with `status = 'upcoming'`**, so a `season_id` always exists to attach fixtures to later — fixtures are generated separately, on demand, by the organizer (see `generate_fixtures` below).
 
 ```sql
 create table public.seasons (
@@ -182,11 +180,13 @@ create table public.seasons (
 );
 ```
 
+// NOTE: "fixtures have been generated" is a **derived** state — `count(fixtures where season_id = $season_id) > 0` — not a stored flag. Generating fixtures does not by itself change `status`; the season stays `upcoming` until the organizer starts play (`active`), a separate action.
+
 ---
 
 ### `fixtures`
 
-A single scheduled match within a season. Fixtures are always intra-division — both teams must belong to the same division.
+A single scheduled match within a season. Fixtures are always intra-division — both teams must belong to the same division. Fixture rows **do not exist until the organizer runs the `generate_fixtures` action** — the "not yet generated" state is the absence of rows, not a status value.
 
 ```sql
 create table public.fixtures (
@@ -362,37 +362,53 @@ This is one database round-trip regardless of squad size. Results are not cached
 
 ### `league_applications`
 
-A pending request from a user to join a public league with a new team. Covers the "Join" button flow on `/discover`.
+A pending request to add a new team to a league, in **either direction**: a user applying to join a public league (the "Join" button flow on `/discover`), or a league organizer inviting a user to bring a team in. Both directions share one table and resolve through the same accept→create-team path.
 
-Teams are league-scoped in this schema — a team is created when the application is approved, not before. The application captures the proposed team identity so the organizer can review it before creating the team row.
+Teams are created when a request is **accepted**, not before. The request captures the proposed team identity so it can be reviewed before the team row is created. For an organizer-initiated invitation the team fields may be left blank and filled by the invitee on acceptance — hence they are nullable here and enforced present in the application layer at acceptance time.
 
 ```sql
 create table public.league_applications (
   id              uuid        primary key default gen_random_uuid(),
   league_id       uuid        not null references public.leagues(id) on delete cascade,
-  applicant_id    uuid        not null references public.users(id)   on delete restrict,
-  team_name       text        not null,
-  team_initials   text        not null check (length(team_initials) between 2 and 3),
+  kind            text        not null
+                                check (kind in ('application', 'invitation')),
+  user_id         uuid        not null references public.users(id)   on delete restrict,
+  created_by      uuid        not null references public.users(id)   on delete restrict,
+  team_name       text,
+  team_initials   text        check (length(team_initials) between 2 and 3),
   team_color      text        not null default '#1f9a52',
-  message         text,                 -- optional note from the applicant
+  message         text,                 -- optional note from the initiator
   status          text        not null default 'pending'
                                 check (status in ('pending', 'approved', 'rejected')),
   resolved_by     uuid        references public.users(id) on delete set null,
   resolved_at     timestamptz,
   created_at      timestamptz not null default now(),
-  unique (league_id, applicant_id)      -- one active application per user per league
+  unique (league_id, user_id)           -- one active request per user per league
 );
 ```
 
-**On approval (application layer):**
-1. `INSERT INTO public.teams (league_id, captain_id, name, initials, color_hex)` using the application's fields.
-2. `INSERT INTO public.team_players (team_id, user_id, status = 'active')` for the applicant.
-3. `UPDATE public.league_applications SET status = 'approved', resolved_by = organizer_id, resolved_at = now()`.
+**Column notes:**
 
-**On rejection:**
+| Column | Notes |
+|---|---|
+| `kind` | `'application'` (user→league) or `'invitation'` (organizer→user). Discriminates the two directions. |
+| `user_id` | The prospective captain in both directions. (Renamed from `applicant_id`.) |
+| `created_by` | Who initiated the row. For an application, equals `user_id`. For an invitation, the organizer. |
+| `status` | `pending → approved \| rejected`. For an **invitation**, `approved` = invitee accepted, `rejected` = invitee declined. |
+
+**Direction semantics:**
+- **Application** (`kind = 'application'`): `created_by = user_id = applicant`. The organizer approves or rejects.
+- **Invitation** (`kind = 'invitation'`): `created_by = organizer`, `user_id = invited captain`. The invitee accepts (`approved`) or declines (`rejected`). The invitee must be an existing user (organizer picks by email/name); inviting unregistered users by email is a later email/edge-function concern.
+
+**On acceptance (application layer)** — identical regardless of direction:
+1. `INSERT INTO public.teams (division_id, captain_id, name, initials, color_hex)` from the row's team fields, assigning the team to a division (default the league's `sort_order = 1` division).
+2. `INSERT INTO public.team_players (team_id, user_id, status = 'active')` for `user_id`.
+3. `UPDATE public.league_applications SET status = 'approved', resolved_by = auth.uid(), resolved_at = now()`.
+
+**On rejection / decline:**
 1. `UPDATE public.league_applications SET status = 'rejected', resolved_by, resolved_at`.
 
-The `unique (league_id, applicant_id)` constraint prevents duplicate applications. A rejected applicant would need their row deleted (by the organizer) before re-applying.
+The `unique (league_id, user_id)` constraint allows only one active request per user per league, which also prevents an application and an invitation colliding. A rejected user needs their row deleted (by the organizer) before a new request.
 
 ---
 
@@ -429,8 +445,9 @@ create index on public.player_stats (team_id);       -- team stats tab
 
 -- league_applications
 create index on public.league_applications (league_id);    -- organizer review list
-create index on public.league_applications (applicant_id); -- user's pending applications
+create index on public.league_applications (user_id);      -- user's pending requests (applications + invitations)
 create index on public.league_applications (status);       -- filter pending/approved
+create index on public.league_applications (kind);         -- split applications vs invitations
 
 -- blockers
 create index on public.recurring_blockers (user_id);       -- player's own blocker list
@@ -597,6 +614,52 @@ row.form = form ?? []; // FormResult[]
 
 ---
 
+### `public.generate_fixtures(p_season_id)`
+
+Generates the full intra-division round-robin schedule for a season, triggered by a **manual organizer action** — never at league creation. This is the heavy batch write in the system: a 30-team double round-robin produces 870 rows. It is expressed as a single in-database `INSERT … SELECT` per division (not an application loop) and wrapped in one transaction, for exactly the serverless-timeout and atomicity reasons that used to apply to league creation.
+
+**Contract:**
+
+- **Guarded by results.** If any `match_results` row exists for a fixture in this season, the function raises an exception and makes no changes. Regeneration is only possible while no result has been submitted.
+- **Wipe and rebuild.** It first `DELETE FROM public.fixtures WHERE season_id = p_season_id`, then regenerates. Pressing the button again therefore produces a clean schedule reflecting the current roster (teams that joined since the last generation). The delete cascades to any pre-season `availability` rows for those fixtures — acceptable because no results exist yet.
+- **Per division.** For each division in the season's league, it pairs that division's active teams (`teams.division_id`, `team_players.status = 'active'`) into a round-robin, honoring `leagues.rounds`: `'single'` = each pair once; `'double'` = home and away legs. Teams in different divisions never meet.
+- **Intra-division by construction.** Because each division's schedule is built only from that division's teams, the `home_team_id`/`away_team_id` same-division invariant (see the `fixtures` note above) holds automatically.
+- New rows get `status = 'scheduled'`, `scheduled_at = NULL` (kickoff times are assigned later by the smart-scheduling flow), and a per-division `matchday` sequence.
+
+```sql
+-- Signature (round-robin body omitted):
+create or replace function public.generate_fixtures(p_season_id uuid)
+returns integer            -- number of fixtures created
+language plpgsql
+as $$
+declare
+  v_count integer;
+begin
+  if exists (
+    select 1
+    from   public.match_results mr
+    join   public.fixtures f on f.id = mr.fixture_id
+    where  f.season_id = p_season_id
+  ) then
+    raise exception 'Cannot regenerate fixtures: results already submitted for this season';
+  end if;
+
+  delete from public.fixtures where season_id = p_season_id;
+
+  -- For each division in the season's league, batch-insert a round-robin
+  -- over that division's active teams, honoring leagues.rounds.
+  -- ... INSERT INTO public.fixtures (...) SELECT ... ;
+
+  get diagnostics v_count = row_count;
+  return v_count;
+end;
+$$;
+```
+
+**Usage:** `await supabase.rpc("generate_fixtures", { p_season_id })` from the organizer's "Generate fixtures" button.
+
+---
+
 ## Sample Queries
 
 ### Top scorers for a season
@@ -667,8 +730,9 @@ select
   u.display_name  as applicant_name,
   u.email         as applicant_email
 from   public.league_applications la
-join   public.users u on u.id = la.applicant_id
+join   public.users u on u.id = la.user_id
 where  la.league_id = $1
+  and  la.kind      = 'application'
   and  la.status    = 'pending'
 order  by la.created_at asc;
 ```
@@ -732,7 +796,7 @@ Enable row-level security on all tables. The patterns below define intent — ac
 - Same policy as `recurring_blockers`.
 
 ### `league_applications`
-- An authenticated user can insert a row for themselves (`applicant_id = auth.uid()`), subject to the unique constraint preventing duplicate applications.
-- A user can read their own applications.
-- The league organizer (`leagues.organizer_id = auth.uid()`) can read all applications for their league and update `status`, `resolved_by`, `resolved_at`.
-- Applications cannot be deleted by applicants — only by the organizer (to allow a re-application after rejection).
+Policies differ by direction (`kind`):
+- **Applications** (`kind = 'application'`): an authenticated user can insert a row for themselves (`created_by = user_id = auth.uid()`), subject to the unique constraint. The user can read their own applications. The league organizer (`leagues.organizer_id = auth.uid()`) can read all applications for their league and update `status`, `resolved_by`, `resolved_at` (approve/reject).
+- **Invitations** (`kind = 'invitation'`): only the league organizer can insert (`created_by = auth.uid()` and they organize `league_id`). The invitee (`user_id = auth.uid()`) can read their own invitations and update `status` to accept/decline. The organizer may cancel (delete) a still-pending invitation.
+- Rows cannot be deleted by the non-initiating party. The organizer may delete a resolved row to allow a fresh request after rejection/decline.

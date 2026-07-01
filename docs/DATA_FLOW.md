@@ -223,26 +223,39 @@ await supabase.from("availability").upsert({
 
 **What to wire:** The "Launch league" and "Create team" buttons at the end of each wizard.
 
-These are the most complex writes in the app — multi-table, must be atomic, and for large leagues involve inserting hundreds of fixture rows. **Implement both as Supabase RPC stored procedures, not as Server Actions calling multiple queries in sequence.** The reasons are:
+**League creation** no longer generates fixtures and no longer sends team invites. Launching a league just establishes the empty competition — teams join afterward (apply/approve or organizer invite), and the organizer generates fixtures on demand once teams are present (see *Generate fixtures* below).
 
-- **Atomicity.** A Server Action that calls inserts sequentially has no transaction boundary. If the fixtures insert fails after the league and divisions are already created, you're left with a broken league. A stored procedure wraps everything in a single transaction.
-- **Serverless timeout risk.** Vercel's default serverless function timeout is 10 seconds (Hobby) and 60 seconds (Pro). A 30-team double round-robin generates 870 fixture rows. Inserting these one-by-one in a Server Action loop will exceed the Hobby limit and be unacceptably slow on Pro. A stored procedure does this in a single batch `INSERT ... SELECT` inside the database, which is orders of magnitude faster.
-
-**League creation stored procedure steps:**
-1. Insert into `leagues`
+**League creation steps:**
+1. Insert into `leagues` (no `auto_fixture` column — it has been removed)
 2. Insert one row per division into `divisions` (at least one, defaulting to `Division 1`)
-3. Insert into `seasons` (if starting immediately)
-4. Generate and batch-insert all `fixtures` rows using a round-robin algorithm expressed in SQL — **not a loop in application code**
-5. Return the new `league_id` to the client
+3. Insert one `seasons` row with `status = 'upcoming'`
+4. Return the new `league_id` (and `season_id`) to the client
+
+This is a cheap three-table write. The serverless-timeout rationale that previously forced league creation to be a batch stored procedure **no longer applies** — the heavy fixture generation has moved to its own action. Keep it as a small RPC (or a `SECURITY DEFINER` function) so the three inserts share one transaction and roll back cleanly together, but a Server Action with sequential inserts is also acceptable here.
 
 **Team creation:**
 1. Insert into `teams` (with `division_id`)
 2. Insert into `team_players` for the creating user as captain
-3. Optionally insert `team_players` rows for invited emails with `status = 'invited'`
+3. Optionally insert `team_players` rows for invited player emails with `status = 'invited'`
 
-Team creation is simpler and can be a Server Action with sequential inserts since it's only 2–3 rows and failure at any step leaves no harmful partial state (a `teams` row with no captain is easily cleaned up). League creation must be a stored procedure.
+Team creation is simple and can be a Server Action with sequential inserts since it's only 2–3 rows and failure at any step leaves no harmful partial state (a `teams` row with no captain is easily cleaned up).
 
-**Invite emails** are not part of the stored procedure — send them after the RPC returns successfully, via a Supabase Edge Function or external email service. Email failure should not roll back the league creation.
+---
+
+### 4b. Generate fixtures (organizer action)
+
+Fixture generation is a **separate, manual organizer action** — never part of league creation. Once enough teams have joined a division, the organizer presses "Generate fixtures", which calls `supabase.rpc('generate_fixtures', { p_season_id })`.
+
+This is now the heaviest write in the app and the one operation that genuinely needs to be a batch stored procedure for the original reasons:
+
+- **Atomicity.** The wipe-and-rebuild runs in one transaction so a failure can't leave a half-written schedule.
+- **Serverless timeout risk.** A 30-team double round-robin generates 870 fixture rows. The function builds them with a single in-database `INSERT … SELECT` per division — orders of magnitude faster than an application loop, and safely within the Vercel timeout.
+
+**Contract** (full definition in `SCHEMA.md`):
+- **Regenerate until results exist.** Each press wipes the season's fixtures and rebuilds from the current roster, so teams that joined since the last generation are included. The function raises and makes no changes once any `match_results` row exists for the season — so the UI should disable the button at that point.
+- Generation runs **per division**, round-robin over each division's active teams, honoring `leagues.rounds` (single vs. home & away). New fixtures are `status = 'scheduled'` with `scheduled_at = NULL`; kickoff times are assigned later by the smart-scheduling flow.
+
+**Invite emails** (organizer inviting a captain, or a team-creation invite) are sent after the relevant RPC returns successfully, via a Supabase Edge Function or external email service. Email failure should not roll back the database write.
 
 ---
 
@@ -269,6 +282,8 @@ left join public.teams t on t.division_id = d.id
 where l.visibility = 'public'
 group by l.id;
 ```
+
+**Joining a league** goes through the generalized `league_applications` table in either direction: a user applying via the Discover "Join" button (`kind = 'application'`), or an organizer inviting a captain (`kind = 'invitation'`). Both resolve through the same accept→create-team path — a `teams` row is created only on acceptance. See the `league_applications` table in `SCHEMA.md`.
 
 ---
 

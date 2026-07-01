@@ -148,7 +148,7 @@ Exported via `src/components/layout/index.ts`.
 
 ### Icons — `src/components/icons/index.tsx`
 
-All icons are inline SVGs built with a `makeIcon()` factory. Exported: `StandingsIcon`, `DiscoverIcon`, `ScheduleIcon`, `TeamIcon`, `ProfileIcon`, `SearchIcon`, `BellIcon`, `PlusIcon`, `MenuIcon`, `CloseIcon`.
+All icons are inline SVGs built with a `makeIcon()` factory. Exported: `StandingsIcon`, `DiscoverIcon`, `ScheduleIcon`, `TeamIcon`, `ProfileIcon`, `ManageIcon`, `SearchIcon`, `BellIcon`, `PlusIcon`, `MenuIcon`, `CloseIcon`.
 
 All accept `size?: number` (default 18) and all standard SVG props.
 
@@ -166,6 +166,7 @@ Both `src/app/page.tsx` and `src/app/(dashboard)/page.tsx` redirect to `/standin
 | `/discover` | `src/app/(dashboard)/discover/page.tsx` |
 | `/schedule` | `src/app/(dashboard)/schedule/page.tsx` |
 | `/team` | `src/app/(dashboard)/team/page.tsx` |
+| `/manage` | `src/app/(dashboard)/manage/page.tsx` |
 | `/profile` | `src/app/(dashboard)/profile/page.tsx` |
 | `/create` | `src/app/(dashboard)/create/page.tsx` |
 

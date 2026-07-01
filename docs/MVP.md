@@ -41,9 +41,10 @@ An authenticated user can create a league as organizer. League configuration inc
 | Visibility | `public` (discoverable on /discover) or `private` (invite-only) |
 | Points system | Configurable win/draw points (default 3/1/0) |
 | Tiebreaker | Goal difference or head-to-head |
-| Auto-fixture generation | Toggle — generate full schedule on season start |
 
-The 4-step Create wizard in `src/app/(dashboard)/create/page.tsx` already collects all of these fields. The MVP task is to connect the final step ("Launch league") to a Supabase insert.
+Fixtures are **not** generated at creation. After teams have joined, the organizer generates the schedule on demand with a manual "Generate fixtures" action (see §4). There is no auto-fixture toggle.
+
+The Create wizard in `src/app/(dashboard)/create/page.tsx` collects these fields. The MVP task is to connect the final step ("Launch league") to a Supabase insert that creates the league, its divisions, and an `upcoming` season. The wizard no longer collects team invitations — teams join after the league exists (see §3 and §8).
 
 ### Divisions
 
@@ -57,9 +58,9 @@ An organizer can add further divisions to the same league (e.g. "Division 2", "D
 
 Teams are assigned to a single division within the league. Fixtures are generated and played within a division — teams only play other teams in the same division in the regular season.
 
-The `divisions` field on `LeagueState` (already added to the Create wizard state) holds the number of divisions the organizer wants. During the Structure step this defaults to 1. When the Create wizard is wired to Supabase, launching the league inserts one `divisions` row per requested division and assigns the invited teams across them. For a single-division league this is invisible — it's just an automatic step.
+The `divisions` field on `LeagueState` (already added to the Create wizard state) holds the number of divisions the organizer wants. During the Structure step this defaults to 1. When the Create wizard is wired to Supabase, launching the league inserts one `divisions` row per requested division. Teams are assigned to a division later, when they join — not at creation. For a single-division league this is invisible — it's just an automatic step.
 
-**The Create wizard UI does not yet expose division count or team-to-division assignment. That is in scope for MVP but not yet built.**
+**The Create wizard UI does not yet expose division count. That is in scope for MVP but not yet built.**
 
 ---
 
@@ -86,13 +87,15 @@ A season belongs to a league. One league can have multiple seasons (sequentially
 
 **Season fields:** name (e.g. "2025/26"), start date, end date, status (`upcoming`, `active`, `completed`)
 
-**Fixture generation:** When an organizer launches a season with auto-fixture enabled, the app generates a round-robin schedule per division:
+**Fixture generation:** A season starts with **no fixtures**. Once teams have joined, the organizer triggers a manual "Generate fixtures" action (the `generate_fixtures` RPC), which generates a round-robin schedule per division:
 - Single round-robin: each team plays every other team in its division once
 - Double round-robin: home and away legs within the division
 
 Teams in different divisions do not play each other in the regular season. Fixture generation runs independently for each division using only the teams assigned to that division.
 
-Each fixture has: home team, away team, division, matchday number, scheduled date/time, venue, status (`scheduled`, `played`, `postponed`).
+Generation can be re-run as more teams join — each run wipes and rebuilds the season's schedule — but it locks the moment any result is submitted. After that the schedule is fixed.
+
+Each fixture has: home team, away team, division, matchday number, scheduled date/time, venue, status (`scheduled`, `played`, `postponed`). Generated fixtures start with no kickoff time; times are assigned later via smart scheduling.
 
 Fixture generation is deterministic from the team list — the same teams always produce the same schedule for a given round-robin type. No randomness beyond the initial draw order.
 
@@ -198,7 +201,7 @@ Each listing shows:
 
 **Filtering:** Client-side filter by format. Dropdown filters for location and day are shown in the UI but not yet functional (MVP: implement location and day filtering).
 
-**Join:** The Join button on a league card should trigger an authenticated request to join the league. For public leagues, this creates a pending team application. For invite-only leagues (which don't appear on Discover), joining is invite-only.
+**Join:** The Join button on a league card should trigger an authenticated request to join the league. For public leagues, this creates a pending team application that the organizer approves. For invite-only leagues (which don't appear on Discover), the organizer instead invites captains directly. Both directions run through the same `league_applications` table (`kind = 'application'` vs `'invitation'`) and create the team only on acceptance. A team row is never created at league creation — every team enters via approval or invitation afterward.
 
 ---
 
